@@ -38,13 +38,13 @@ def read_root():
 
 
 # Upload images
-@app.post("/uploadImages/")
+@app.post("/images/upload")
 async def create_upload_files(files: list[UploadFile]):
     return {"filenames": [file.filename for file in files]}
 
 
 # List uploaded Images (name)
-@app.get("/images/")
+@app.get("/images/list")
 async def list_images():
   custom_logger.debug('Retrieving uploaded images')
   imageNames = binding.list_uploaded_images()

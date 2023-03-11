@@ -8,7 +8,7 @@ const DisplayImages = () => {
   const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
 
   const getAvailableImages = () => {
-    fetch("http://localhost:8000/images/")
+    fetch("http://localhost:8000/images/list")
       .then((response) => response.json())
       .then((json) => {
         setAvailableImages(json.images)
