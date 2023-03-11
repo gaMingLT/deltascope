@@ -28,20 +28,50 @@ def database_con(path: str):
   db_logger.info('Connected to database')
   return con
 
-def createTable(name: str, con):
-  db_logger.debug('Creating table: {0}'.format(name))
+def createImageFilesTable(name: str, con):
+  db_logger.debug('Creating table: {0}_files'.format(name))
   cur = con.cursor()
-  cur.execute("CREATE TABLE {0}(md5,name,inode,mode_as_string,uid,gid,size,atime,mtime,ctime,crtime)".format(name.replace('-','_')))
+  cur.execute("CREATE TABLE {0}_files(md5,name,inode,mode_as_string,uid,gid,size,atime,mtime,ctime,crtime)".format(name.replace('-','_')))
   con.commit()
 
-def inputValues(name: str, values, con):
+def inputValuesImageFilesTable(name: str, values, con):
   cur = con.cursor()
   db_logger.debug('Inserting values into Database: {0}'.format(name))
-  cur.executemany("INSERT INTO {0} VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(name.replace('-','_')), values)
+  cur.executemany("INSERT INTO {0}_files VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(name.replace('-','_')), values)
   con.commit()
 
-def getTableData(name: str, con):
+def getImageFilesValues(name: str, con):
   cur = con.cursor()
   db_logger.debug('Retrieving values from database: {0}'.format(name))
-  res = cur.execute("SELECT * FROM {0}".format(name))
+  res = cur.execute("SELECT * FROM {0}_files".format(name))
+  return res.fetchall()
+
+def createImageTimelineTable(name: str, con):
+  db_logger.debug('Creating table: {0}_events'.format(name))
+  cur = con.cursor()
+  cur.execute("CREATE TABLE {0}_events(date,size,activity,permissions,uid,guid,inode,name)".format(name.replace('-','_')))
+  con.commit()
+
+def inputValuesImageTimelineTable(name: str, values ,con):
+  cur = con.cursor()
+  db_logger.debug('Inserting values into Database: {0}_events'.format(name))
+  cur.executemany("INSERT INTO {0}_events VALUES(?, ?, ?, ?, ?, ?, ?, ?)".format(name.replace('-','_')), values)
+  con.commit()
+  
+# def getImageEventsValues(name: str, con):
+#   cur = con.cursor()
+#   db_logger.debug('Retrieving values from database: {0}'.format(name))
+#   res = cur.execute("SELECT * FROM {0}_events".format(name))
+#   return res.fetchall()
+
+def createTimelineDeltaTable(names: str, con):
+  db_logger.debug('Creating table: {0}_{1}_events_delta'.format(names[0], names[1]))
+  cur = con.cursor()
+  cur.execute("CREATE TABLE {0}_{1}_events_delta(date,size,activity,permissions,uid,guid,inode,name)".format(names[0],  names[1]))
+  con.commit()
+
+def getImageEventsDelta(names: str, con):
+  cur = con.cursor()
+  db_logger.debug('Retrieving delta values from database')
+  res = cur.execute("SELECT * FROM {0}_events WHERE date NOT IN (SELECT date FROM {1}_events)".format(names[1], names[0]))
   return res.fetchall()

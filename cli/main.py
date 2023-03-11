@@ -1,7 +1,7 @@
 import argparse
 import logging, json
-from methods import executeFls, imageInfo, prepareFilesystem, parseBodyFile, compareHashAndPath, getFilesDiffing
-from db import database_con, createTable, inputValues, getTableData
+from methods import * # executeFls, imageInfo, prepareFilesystem, parseBodyFile, compareHashAndPath, retrieveFilesFromImages, createMacTimeLineFile, parseMacTimeLineFile
+from db import * # database_con, createImageFilesTable, inputValuesImageFilesTable, getImageFilesTableValues, createImageTimelineTable, inputValuesImageTimelineTable
 from loger import CustomFormatter
 
 class CustomFormatter(logging.Formatter):
@@ -62,26 +62,45 @@ def main():
   for path in args.images:
     imageInfo(path=path)
     bodyFilePath = executeFls(path=path, out=outPath)
+    
     name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
     tablesNames.append(name)
-    createTable(name=name, con=dbCon)
-    data = parseBodyFile(path=bodyFilePath, out=outPath)
-    inputValues(name=name, values=data, con=dbCon)
+    
+    createImageFilesTable(name=name, con=dbCon)
+    fileData = parseBodyFile(path=bodyFilePath, out=outPath)
+    inputValuesImageFilesTable(name=name, values=fileData, con=dbCon)
+    
+    # Timeline creation
+    createImageTimelineTable(name,con=dbCon)
   
+    # Create timeline files
+    createMacTimeLineFile(name=name, out=outPath)
+    
+    # Parse timelines file
+    timelineData = parseMacTimeLineFile(name=name, out=outPath)
+    
+    # Add data to database file
+    inputValuesImageTimelineTable(name=name, values=timelineData, con=dbCon)
+
   dataImages = []
   
   for tableName in tablesNames:
-    data = getTableData(name=tableName, con=dbCon)
-    dataImages.append((tableName,data))
+    fileData = getImageFilesValues(name=tableName, con=dbCon)
+    dataImages.append((tableName,fileData))
   
-  delta  = compareHashAndPath(data=dataImages,con=dbCon)
+  fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
+  retrieveFilesFromImages(deltas=fileDelta, out=outPath)
   
-  prettyDelta = json.dumps(delta, indent=4)
-  print(prettyDelta)
+  createTimelineDeltaTable(names=tablesNames, con=dbCon)
+  eventsDelta = getImageEventsDelta(tablesNames, con=dbCon)
+  print('Delta', eventsDelta)
   
-  getFilesDiffing(deltas=delta, out=outPath)
+  # prettyDelta = json.dumps(delta, indent=4)
+  # print(prettyDelta)
   
-  pass
+  # retrieve data from data: get events between both images
+  
+  
 
 
 def parseargs():
@@ -94,7 +113,6 @@ def parseargs():
                     help='image paths')
   
   args = parser.parse_args()
-  # print('Imagse path: ', args.images)
   
   return args
   

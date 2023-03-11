@@ -39,6 +39,7 @@ def imageInfo(path: str):
 
   methods_logger.info("MD5: {0}".format(md5.hexdigest()))
 
+
 def prepareFilesystem(paths, out: str) -> str:
   methods_logger.debug('Preparing filesystem: Images:  {0} - Out: {1}'.format(paths,out))
   
@@ -53,6 +54,7 @@ def prepareFilesystem(paths, out: str) -> str:
   
   return pathOutPutDir
 
+
 def executeFls(path: str, out: str) -> str:
   methods_logger.info('Retrieving files from image using FLS')
   
@@ -64,6 +66,7 @@ def executeFls(path: str, out: str) -> str:
     methods_logger.info('FLS Execution - Succes!')
     
   return bodyFilePath
+
 
 def parseBodyFile(path: str, out: str) -> list:
   methods_logger.info('Parsing body file')
@@ -82,6 +85,8 @@ def parseBodyFile(path: str, out: str) -> list:
 def compareHashAndPath(data, con):
   methods_logger.info('Comparing hash and path: ')
   hashAndPathImages = []
+  
+  # print('Compare: ', data)
   
   for img in data:
     # hashAndPath = []
@@ -175,30 +180,66 @@ def compareHashAndPath(data, con):
   return deltaImage
 
 
-def getFilesDiffing(deltas, out: str):
+def createMacTimeLineFile(name, out: str):
+  
+  if not path.exists('{0}/{1}'.format(out,'timelines')):
+    mkdir('{0}/{1}'.format(out,'timelines'))
+
+  cmd = "mactime -b {1}/{0}.txt > {1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
+  res = system(cmd)
+  
+  if res == 0:
+    methods_logger.info('Completed creating mactime line file for {0}'.format(name))
+
+
+def parseMacTimeLineFile(name, out: str):
+  path = "{1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
+  
+  f = open(path, "r")
+  data = []
+  
+  for line in f.readlines():
+    date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:33], line[33:38], line[39:52], line[52:54], line[61:63], line[69:74], line[74:]
+    values = (date.strip(), size.strip(), activity.strip()  ,perm.strip(), uid.strip(), guid.strip(), inode.strip(), file_name.strip())
+    data.append(values)
+
+  return data
+
+
+def deltaEventsImages(names):
+  pass 
+
+
+def retrieveFilesFromImages(deltas, out: str):
   modified = deltas['differences']['modified']
   modifiedFilePaths = []
+  
+  # print('Deltas files: ', deltas)
   
   for mod in modified:
     fileOrDir = mod[3].split('/')[0]
     
     if fileOrDir == 'd':
-      print('Directory: ', mod)
+      # print('Directory: ', mod)
+      pass
     elif fileOrDir == 'r':
       modifiedFilePaths.append(mod)
-      print('File: ', mod)
+      # print('File: ', mod)
     else:
-      print('Else: ', mod)
+      # print('Else: ', mod)
+      pass
   
   
   imageNames = [deltas['delta'], deltas['next']]
   
-  for name in imageNames:
-    for mod in modifiedFilePaths:
-      cmd = "icat ./images/{0}.img {1} > {2}/{0}-{1}.txt".format(name.replace('_','-'), mod[2], out)
-      res = system(cmd)
-      
-      if res == 0:
-        methods_logger.debug('Retrieving file succesfull!')
-        
+  if not path.exists('{0}/{1}'.format(out,'icat')):
+    mkdir('{0}/{1}'.format(out,'icat'))
   
+  # for name in imageNames:
+  #   for mod in modifiedFilePaths:
+  #     cmd = "icat ./images/{0}.img {1} > {2}/icat/{0}-{1}.txt".format(name.replace('_','-'), mod[2], out)
+  #     res = system(cmd)
+      
+  #     if res == 0:
+  #       methods_logger.debug('Retrieving file succesfull!')
+        
