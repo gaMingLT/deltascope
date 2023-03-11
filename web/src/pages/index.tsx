@@ -1,10 +1,12 @@
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import Timeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
 import FileDisplay from "~/components/File";
+import DisplayImages from "~/components/DisplayImages";
+import OptionsMenu from "~/components/OptionsMenu";
 
 const Home: NextPage = () => {
   return (
@@ -15,16 +17,38 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Timeline />
-        <div>
-          <Upload />
-          <div>
-            <FileDisplay />
-            <FileDisplay />
-          </div>
-        </div>
-        
-        <Button variant="contained">Hello World</Button>
+        <Grid
+          container
+          direction={"column"}
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
+        >
+          <Grid item xs={6} md={8}>
+            <Timeline />
+          </Grid>
+          <Grid container spacing={2} xs={6}>
+            {/* File */}
+            <Grid container direction={"column"} spacing={2} xs={6}>
+              <Upload />
+              <DisplayImages />
+              {/* TODO: Add display files images */}
+            </Grid>
+            {/* Menu & File Differences + Events */}
+            <Grid container direction={"column"} xs={6}>
+              <OptionsMenu />
+              <Grid
+                container
+                direction={"row"}
+                spacing={2}
+                xs={6}
+              >
+                <FileDisplay />
+                <FileDisplay />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
       </main>
     </>
   );

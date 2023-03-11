@@ -3,6 +3,7 @@ import os, sys, logging
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
 from logging.handlers import RotatingFileHandler
 from loger import custom_logger
 
@@ -17,6 +18,18 @@ class DeltaScopeOptions(BaseModel):
 
 
 app = FastAPI()
+
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
