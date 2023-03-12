@@ -27,22 +27,17 @@ const Home: NextPage = () => {
           <Grid item xs={6} md={8}>
             <Timeline />
           </Grid>
-          <Grid container spacing={2} xs={6}>
+          <Grid container spacing={2} item xs={6}>
             {/* File */}
-            <Grid container direction={"column"} spacing={2} xs={6}>
+            <Grid container direction={"column"} spacing={2} item xs={6}>
               <Upload />
               <DisplayImages />
               {/* TODO: Add display files images */}
             </Grid>
             {/* Menu & File Differences + Events */}
-            <Grid container direction={"column"} xs={6}>
+            <Grid container direction={"column"} item xs={6}>
               <OptionsMenu />
-              <Grid
-                container
-                direction={"row"}
-                spacing={2}
-                xs={6}
-              >
+              <Grid container direction={"row"} spacing={2} item xs={6}>
                 <FileDisplay />
                 <FileDisplay />
               </Grid>

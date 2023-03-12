@@ -14,7 +14,7 @@ sys.path.append(parentdir)
 from cli import binding
 
 class DeltaScopeOptions(BaseModel):
-    name: str
+    images: list[str]
 
 
 app = FastAPI()
@@ -55,6 +55,7 @@ async def list_images():
 # - Add options of what should be done
 @app.post("/delta/")
 async def initiate_delta_images(deltaScopeOptions: DeltaScopeOptions):
+    print('Options: ', deltaScopeOptions)
     return { 'options': deltaScopeOptions }
 
 

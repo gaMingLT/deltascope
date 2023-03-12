@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import { Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
@@ -6,6 +6,8 @@ import React, { useState, useEffect } from 'react';
 const DisplayImages = () => {
   const [availableImages, setAvailableImages] = useState<Array<string>>([]);
   const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
+  const [deltaError, setDeltaError] = useState<string>('');
+  const [displayDeltaError, setDisplayDeltaError] = useState<string>('hidden');
 
   const getAvailableImages = () => {
     fetch("http://localhost:8000/images/list")
@@ -14,6 +16,38 @@ const DisplayImages = () => {
         setAvailableImages(json.images)
       });
   };
+
+  const initiateDelta = () => {
+    console.log('Lenght: ', selectedImages.length);
+    if (selectedImages.length < 2) {
+      // setDeltaError('Unable to initiate delta - amount of selected images to low');
+      // const intervalId = setInterval(() => {
+      //   console.log('Interval', displayDeltaError)
+      //   if (displayDeltaError == 'visible') {
+      //     console.log('Set to hidden')
+      //     setDisplayDeltaError('hidden');
+      //     setDeltaError('');
+      //     clearInterval(intervalId);
+      //   } else {
+      //     console.log('Set to visible')
+      //     setDisplayDeltaError('visible');
+      //     setDeltaError('Unable to initiate delta - amount of selected images to low');
+      //   }
+      // }, 1500);
+    }
+    else {
+      const data = { 'images': selectedImages }
+      setDeltaError('');
+      
+      fetch("http://localhost:8000/delta/", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(e => console.log('Response: ', e)).catch(e => console.log('Error', e))      
+    }
+  }
 
   const addImageForComparison = (e: any) => {
     const image = e.target.getAttribute('data-name');
@@ -35,7 +69,8 @@ const DisplayImages = () => {
     <>
       <h2>Images</h2>
       <h3>Selected Images</h3>
-      <div>
+      {/* <Typography variant="h3" sx={{ fontSize: 24, color: 'white', fontWeight: 'bold' }} >Selected Images</Typography> */}
+      <Box sx={{ display: 'flex' }}>
         {selectedImages.map((name, index) => (
           <Box
             key={index}
@@ -43,16 +78,20 @@ const DisplayImages = () => {
             onClick={addImageForComparison}
             sx={{
               textAlign: "left",
-              fontSize: 16,
-              fontWeight: "",
-              color: "white",
-              margin: '1rem'
+              fontSize: 18,
+              fontWeight: "bold",
+              margin: '1rem',
+              pading: '1.5rem',
+              color: 'black',
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              width: 'auto'
             }}
           >
             {name}
           </Box>
         ))}
-      </div>
+      </Box>
       <h3>Available Images</h3>
       <div>
         {availableImages.map((name, index) => (
@@ -65,16 +104,26 @@ const DisplayImages = () => {
               fontSize: 24,
               fontWeight: "bold",
               color: "white",
-              margin: '1rem'
+              margin: '1rem',
+              padding: '0.5rem',
+              border: '1px solid white',
+              borderRadius: '5px',
+              cursor: 'pointer'
             }}
           >
             {name}
           </Box>
         ))}
       </div>
-      <Button variant="contained" onClick={getAvailableImages}>
+      <Button variant="contained" sx={{ marginTop: '1rem' }} onClick={getAvailableImages}>
         Retrieve Images
       </Button>
+      <Button variant="contained" sx={{ marginTop: '1rem' }}  onClick={initiateDelta}>
+        Initiate Delta
+      </Button>
+      {
+        <Alert sx={{ marginTop: '1rem',  visibility: displayDeltaError }} severity="error">{deltaError}</Alert>
+      }
     </>
   );
 }
