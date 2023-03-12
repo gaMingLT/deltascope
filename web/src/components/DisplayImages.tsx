@@ -9,41 +9,30 @@ interface props {
 const DisplayImages = ({ directoryName }: props) => {
   const [availableImages, setAvailableImages] = useState<Array<string>>([]);
   const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
-  const [deltaError, setDeltaError] = useState<string>('');
-  const [displayDeltaError, setDisplayDeltaError] = useState<boolean>(false);
+  const [ErrorMessage, setDeltaError] = useState<string>('');
+  const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
 
   const getAvailableImages = () => {
+    console.log('Fetching available images')
     fetch("http://localhost:8000/images/list")
       .then((response) => response.json())
       .then((json) => {
         setAvailableImages(json.images)
+      }).catch((e) => {
+        setDisplayErrorMessage(true)
+        setDeltaError('Unable to retrieve available images for comparison');
       });
   };
 
   const initiateDelta = () => {
-    console.log('Lenght: ', selectedImages.length);
     if (selectedImages.length < 2) {
-      setDisplayDeltaError(true)
+      setDisplayErrorMessage(true)
       setDeltaError('Unable to initiate delta - amount of selected images to low');
-      // setDeltaError('Unable to initiate delta - amount of selected images to low');
-      // const intervalId = setInterval(() => {
-      //   console.log('Interval', displayDeltaError)
-      //   if (displayDeltaError == 'visible') {
-      //     console.log('Set to hidden')
-      //     setDisplayDeltaError('hidden');
-      //     setDeltaError('');
-      //     clearInterval(intervalId);
-      //   } else {
-      //     console.log('Set to visible')
-      //     setDisplayDeltaError('visible');
-      //     setDeltaError('Unable to initiate delta - amount of selected images to low');
-      //   }
-      // }, 1500);
     }
     else {
-      const data = { 'images': selectedImages }
+      const data = { 'images': selectedImages, 'directoryNames': directoryName }
       setDeltaError('');
-      setDisplayDeltaError(false)
+      setDisplayErrorMessage(false)
 
       fetch("http://localhost:8000/delta", {
         method: 'POST',
@@ -55,7 +44,10 @@ const DisplayImages = ({ directoryName }: props) => {
         let data = await e.json()
         console.log('Data: ', data)
         directoryName = data['directoryName']
-      }).catch(e => console.log('Error', e))      
+      }).catch((e) =>  {
+        setDisplayErrorMessage(true)
+        setDeltaError('Unable to initiate delta beteween selected images');
+      })      
     }
   }
 
@@ -132,8 +124,8 @@ const DisplayImages = ({ directoryName }: props) => {
         Initiate Delta
       </Button>
       {
-        displayDeltaError ?
-          <Alert sx={{ marginTop: '1rem' }} severity="error">{deltaError}</Alert>
+        displayError ?
+          <Alert sx={{ marginTop: '1rem' }} severity="error">{ErrorMessage}</Alert>
         : ''
       }
     </>
