@@ -12,6 +12,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
  
 from cli import binding
+# from api.cli import binding
 
 class DeltaScopeOptions(BaseModel):
     images: list[str]
@@ -64,7 +65,7 @@ async def initiate_delta_images(deltaScopeOptions: DeltaScopeOptions):
 
 
 # Get Events + Delta events
-@app.get("/events/")
+@app.post("/events/")
 async def get_events(deltaScopeEvents: DeltaScopeEvents):
     custom_logger.debug('Retrieving events from latest comparison: {0}'.format(deltaScopeEvents.directoryName))
     events = binding.get_events(imageNames=deltaScopeEvents.images,directoryPath=deltaScopeEvents.directoryName)

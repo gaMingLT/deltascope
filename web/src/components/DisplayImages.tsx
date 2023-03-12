@@ -83,11 +83,12 @@ const DisplayImages = ({ directoryName }: props) => {
               fontSize: 18,
               fontWeight: "bold",
               margin: '1rem',
-              pading: '1.5rem',
+              pading: '1rem',
               color: 'black',
-              backgroundColor: 'white',
+              backgroundColor: 'lightblue',
               cursor: 'pointer',
-              width: 'auto'
+              width: 'auto',
+              borderRadius: '5px'
             }}
           >
             {name}
@@ -105,10 +106,10 @@ const DisplayImages = ({ directoryName }: props) => {
               textAlign: "left",
               fontSize: 24,
               fontWeight: "bold",
-              color: "white",
+              color: "black",
               margin: '1rem',
               padding: '0.5rem',
-              border: '1px solid white',
+              border: '1px solid black',
               borderRadius: '5px',
               cursor: 'pointer'
             }}

@@ -1,24 +1,43 @@
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
-import { AppBar, Box, Grid, Tab, Tabs, Typography } from "@mui/material";
+import { Alert, AppBar, Box, Button, Grid, Tab, Tabs, Typography } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { useState } from "react";
 
-const rows: GridRowsProp = [
-  {
-    id: 1,
-    date: "Sat Feb 25 2023 16:27:26",
-    size: 16384,
-    activity: "macb",
-    permissions: "d/drwx------",
-    uid: 0,
-    guid: 0,
-    inode: 11,
-    name: "/lost+found",
-  },
-  // Sat Feb 25 2023 16:27:26	16384	macb	d/drwx------	0	0	11	/lost+found
-];
+
+interface Events {
+  'delta': Array<EventRowType>,
+  'base': Array<EventRowType>,
+  'next': Array<EventRowType>
+}
+
+interface EventRowType extends GridRowsProp {
+  id: number,
+  date: string,
+  size: number,
+  activity: string,
+  permissions: string,
+  uid: number,
+  guid: number,
+  inode: number,
+  name: string
+}
+
+// const rows: GridRowsProp = [
+//   {
+//     id: 1,
+//     date: "Sat Feb 25 2023 16:27:26",
+//     size: 16384,
+//     activity: "macb",
+//     permissions: "d/drwx------",
+//     uid: 0,
+//     guid: 0,
+//     inode: 11,
+//     name: "/lost+found",
+//   },
+//   // Sat Feb 25 2023 16:27:26	16384	macb	d/drwx------	0	0	11	/lost+found
+// ];
 
 const columns: GridColDef[] = [
   {
@@ -37,10 +56,35 @@ const columns: GridColDef[] = [
 
 const DisplayEvents = () => {
   const [value, setValue] = useState(0);
+  const [events, setEvents] = useState<Events>({ 'delta': [], 'base': [], 'next': [] })
+  const [ErrorMessage, setDeltaError] = useState<string>('');
+  const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const getEvents = () => {
+    const data = {
+      images: ["exp-changed.img", "another-change.img"],
+      directoryName: "./output/deltascope-2023-03-12_20:25:28-918008",
+    };
+    console.log("Fetching!")
+    fetch("http://localhost:8000/events/", {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(async (e) => {
+      let data = await e.json()
+      setEvents(data)
+      console.log('Data: ', data)
+    }).catch((e) =>  {
+      setDisplayErrorMessage(true)
+      setDeltaError('Unable to retrieve events');
+    }) 
+  }
 
   return (
     <>
@@ -49,6 +93,9 @@ const DisplayEvents = () => {
       <div>
         <p>Legend</p>
         {/* Differentiate in different images based on color */}
+          <Button variant="contained" sx={{ margin: '1rem' }}  onClick={getEvents}>
+            Get Events
+          </Button>
       </div>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value.toString()}>
@@ -67,7 +114,7 @@ const DisplayEvents = () => {
           </Box>
           <TabPanel value="0">
             {/* FIXME: Data not being show on the page */}
-            <DataGrid rows={rows} columns={columns} />
+            <DataGrid rows={events.delta} columns={columns} />
           </TabPanel>
           <TabPanel value="1">
             {/* <DataGrid rows={rows} columns={columns} /> */}
@@ -76,6 +123,11 @@ const DisplayEvents = () => {
             {/* <DataGrid rows={rows} columns={columns} /> */}
           </TabPanel>
         </TabContext>
+          {
+            displayError ?
+              <Alert sx={{ marginTop: '1rem' }} severity="error">{ErrorMessage}</Alert>
+            : ''
+          }
       </Box>      
     </Box>
 
