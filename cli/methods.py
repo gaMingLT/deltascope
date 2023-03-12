@@ -1,7 +1,7 @@
-import hashlib
+import hashlib, datetime, logging
 from os import mkdir, path, system
-import datetime, logging
-from loger import CustomFormatter
+from cli.loger import CustomFormatter
+from cli.db import *
 
 def create_methods_logger():
   # Create custom logger logging all five levels
@@ -206,10 +206,6 @@ def parseMacTimeLineFile(name, out: str):
   return data
 
 
-def deltaEventsImages(names):
-  pass 
-
-
 def retrieveFilesFromImages(deltas, out: str):
   modified = deltas['differences']['modified']
   modifiedFilePaths = []
@@ -243,3 +239,21 @@ def retrieveFilesFromImages(deltas, out: str):
   #     if res == 0:
   #       methods_logger.debug('Retrieving file succesfull!')
         
+
+def getEventsImages(tablesNames, con):
+  events = { 'base': [], 'next': [], 'delta': [] }
+  
+  for index, tableName in enumerate(tablesNames):
+    eventsData = getImageEventsValues(name=tableName, con=con)
+    if index == 0:
+      events['base'] = eventsData
+    else:
+      events['next'] = eventsData
+  
+  eventsDelta = getImageEventsDelta(tablesNames, con=con)
+  print('Delta', eventsDelta)
+  
+  events['delta'] = eventsDelta
+  print('Events images: ', events)
+  
+  return events

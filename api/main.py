@@ -16,6 +16,9 @@ from cli import binding
 class DeltaScopeOptions(BaseModel):
     images: list[str]
 
+class DeltaScopeEvents(BaseModel):
+    images: list[str]
+    directoryName: str
 
 app = FastAPI()
 
@@ -53,25 +56,30 @@ async def list_images():
 
 # Initiate  delta'ing of images
 # - Add options of what should be done
-@app.post("/delta/")
+@app.post("/delta")
 async def initiate_delta_images(deltaScopeOptions: DeltaScopeOptions):
-    print('Options: ', deltaScopeOptions)
-    return { 'options': deltaScopeOptions }
+    custom_logger.debug('Initiating delta of images: {0}'.format(deltaScopeOptions.images))
+    directoryName = binding.initiate_delta_images(deltaScopeOptions.images)
+    return { 'options': '', 'directoryName': directoryName }
 
 
 # Get Events + Delta events
-@app.get("/events")
-async def get_events():
-    return {"events": []}
+@app.get("/events/")
+async def get_events(deltaScopeEvents: DeltaScopeEvents):
+    custom_logger.debug('Retrieving events from latest comparison: {0}'.format(deltaScopeEvents.directoryName))
+    events = binding.get_events(imageNames=deltaScopeEvents.images,directoryPath=deltaScopeEvents.directoryName)
+    return {"events": events}
 
 
 # Get modified - changed - new files & dir
-@app.get("/objects")
-async def get_objects():
+@app.get("/objects/{directoryName}")
+async def get_objects(directoryName: str):
+    custom_logger.debug('Retrieving objects from latest comparison: {0}'.format(directoryName))
     return {"objects": []}
 
 
 # Get files which were modified - get content on web
-@app.get("/diff/files")
-async def diffing_files():
+@app.get("/diff/files/{directoryName}")
+async def diffing_files(directoryName: str):
+    custom_logger.debug('Retrieving files from latest comparison: {0}'.format(directoryName))
     return {"diff_files": []}

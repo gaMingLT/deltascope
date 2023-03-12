@@ -1,14 +1,19 @@
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { Button, Grid } from "@mui/material";
+import { Alert, Button, Grid } from "@mui/material";
 import Timeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
 import FileDisplay from "~/components/File";
 import DisplayImages from "~/components/DisplayImages";
 import OptionsMenu from "~/components/OptionsMenu";
+import DisplayEvents from "~/components/DisplayEvents";
+import { useState } from "react";
 
 const Home: NextPage = () => {
+  const [directoryName, setDirectoryName] = useState<string>('');
+
+
   return (
     <>
       <Head>
@@ -31,7 +36,7 @@ const Home: NextPage = () => {
             {/* File */}
             <Grid container direction={"column"} spacing={2} item xs={6}>
               <Upload />
-              <DisplayImages />
+              <DisplayImages directoryName={directoryName} />
               {/* TODO: Add display files images */}
             </Grid>
             {/* Menu & File Differences + Events */}
@@ -40,6 +45,9 @@ const Home: NextPage = () => {
               <Grid container direction={"row"} spacing={2} item xs={6}>
                 <FileDisplay />
                 <FileDisplay />
+              </Grid>
+              <Grid container direction={"row"} spacing={2} item xs={6}>
+                <DisplayEvents />
               </Grid>
             </Grid>
           </Grid>

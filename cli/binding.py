@@ -1,5 +1,6 @@
 from fastapi import File
-import glob, os
+from cli.delta_scope import delta_image_web, getEventsImages
+import os
 
 # TODO: Scrappe for now - while require streaming
 def place_uploaded_images(files: list[bytes], outPath: str):
@@ -16,16 +17,24 @@ def list_uploaded_images():
   for file in os.listdir('/home/milan/dev/python-tool/deltascope-1/cli/images/'):
       imageFileNames.append(file)
   
-  print(imageFileNames)
+  # main_logger.debug('Listing uploaded images!')
   
   return  imageFileNames
 
 
-def initiate_delta_images():
+def initiate_delta_images(images: list[str]) -> str:
+  paths = []
+  for image in images:
+    paths.append("/home/milan/dev/python-tool/deltascope-1/cli/images/{0}".format(image))
+  # main_logger.debug('Initiating delta of images {0}'.format(paths))
   
+  directoryName = delta_image_web(paths)
   
-  pass
+  return directoryName
 
 
-def get_events():
-  pass
+def get_events(imageNames: list[str], directoryPath: str):
+  # directoryPath = "/home/milan/dev/python-tool/deltascope-1/web/" + directoryPath.replace('./','')
+  events = getEventsImages(tablesNames=imageNames, directoryPath=directoryPath)
+  
+  return events

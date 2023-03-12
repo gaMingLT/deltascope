@@ -1,5 +1,5 @@
 import sqlite3, logging
-import datetime
+from sqlite3 import Connection, DatabaseError, OperationalError
 from loger import CustomFormatter
 
 
@@ -23,10 +23,14 @@ def create_db_logger():
 
 db_logger = create_db_logger()
 
-def database_con(path: str):
-  con = sqlite3.connect("{0}/fls_parse.db".format(path))
-  db_logger.info('Connected to database')
+def database_con(path: str) -> Connection:
+  dbPath = "{0}/images_content.db".format(path)
+  print('Path: ', dbPath)
+  con = sqlite3.connect(dbPath)
+  db_logger.info('Connected to database: {0}'.format(dbPath))
+  
   return con
+
 
 def createImageFilesTable(name: str, con):
   db_logger.debug('Creating table: {0}_files'.format(name))
@@ -58,11 +62,11 @@ def inputValuesImageTimelineTable(name: str, values ,con):
   cur.executemany("INSERT INTO {0}_events VALUES(?, ?, ?, ?, ?, ?, ?, ?)".format(name.replace('-','_')), values)
   con.commit()
   
-# def getImageEventsValues(name: str, con):
-#   cur = con.cursor()
-#   db_logger.debug('Retrieving values from database: {0}'.format(name))
-#   res = cur.execute("SELECT * FROM {0}_events".format(name))
-#   return res.fetchall()
+def getImageEventsValues(name: str, con):
+  cur = con.cursor()
+  db_logger.debug("Retrieving values from database: {0}_events".format(name))
+  res = cur.execute("SELECT * FROM {0}_events".format(name))
+  return res.fetchall()
 
 def createTimelineDeltaTable(names: str, con):
   db_logger.debug('Creating table: {0}_{1}_events_delta'.format(names[0], names[1]))

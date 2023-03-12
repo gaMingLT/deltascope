@@ -1,13 +1,16 @@
 import { Alert, Box, Button } from "@mui/material";
 import { Typography } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
+interface props {
+  directoryName: string
+}
 
-const DisplayImages = () => {
+const DisplayImages = ({ directoryName }: props) => {
   const [availableImages, setAvailableImages] = useState<Array<string>>([]);
   const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
   const [deltaError, setDeltaError] = useState<string>('');
-  const [displayDeltaError, setDisplayDeltaError] = useState<string>('hidden');
+  const [displayDeltaError, setDisplayDeltaError] = useState<boolean>(false);
 
   const getAvailableImages = () => {
     fetch("http://localhost:8000/images/list")
@@ -20,6 +23,8 @@ const DisplayImages = () => {
   const initiateDelta = () => {
     console.log('Lenght: ', selectedImages.length);
     if (selectedImages.length < 2) {
+      setDisplayDeltaError(true)
+      setDeltaError('Unable to initiate delta - amount of selected images to low');
       // setDeltaError('Unable to initiate delta - amount of selected images to low');
       // const intervalId = setInterval(() => {
       //   console.log('Interval', displayDeltaError)
@@ -38,14 +43,19 @@ const DisplayImages = () => {
     else {
       const data = { 'images': selectedImages }
       setDeltaError('');
-      
-      fetch("http://localhost:8000/delta/", {
+      setDisplayDeltaError(false)
+
+      fetch("http://localhost:8000/delta", {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
-      }).then(e => console.log('Response: ', e)).catch(e => console.log('Error', e))      
+      }).then(async (e) => {
+        let data = await e.json()
+        console.log('Data: ', data)
+        directoryName = data['directoryName']
+      }).catch(e => console.log('Error', e))      
     }
   }
 
@@ -122,7 +132,9 @@ const DisplayImages = () => {
         Initiate Delta
       </Button>
       {
-        <Alert sx={{ marginTop: '1rem',  visibility: displayDeltaError }} severity="error">{deltaError}</Alert>
+        displayDeltaError ?
+          <Alert sx={{ marginTop: '1rem' }} severity="error">{deltaError}</Alert>
+        : ''
       }
     </>
   );
