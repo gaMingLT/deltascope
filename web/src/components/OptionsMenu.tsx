@@ -16,28 +16,30 @@ const ImageActions = () => {
 
   return (
     <>
-      <h1>Menu</h1>
-      <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={value.toString()}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'lightblue' }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Events" value="0" />
-            <Tab label="Files" value="1" />
-          </TabList>
+      <Box sx={{ width: '100%' }}>
+        <h1>Menu</h1>
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+          <TabContext value={value.toString()}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'lightblue' }}>
+              <TabList onChange={handleChange} aria-label="lab API tabs example" variant="fullWidth">
+                <Tab label="Events" value="0" />
+                <Tab label="Files" value="1" />
+              </TabList>
+            </Box>
+            <TabPanel value="0">
+              <Grid container direction={"row"} spacing={2} item>
+                <DisplayEvents />
+              </Grid>
+            </TabPanel>
+            <TabPanel value="1">
+              <Grid container direction={"row"} spacing={2} item>
+                <FileDisplay />
+                <FileDisplay />
+              </Grid>
+            </TabPanel>
+          </TabContext>
         </Box>
-        <TabPanel value="0">
-          <Grid container direction={"row"} spacing={2} item>
-            <DisplayEvents />
-          </Grid>
-        </TabPanel>
-        <TabPanel value="1">
-          <Grid container direction={"row"} spacing={2} item>
-            <FileDisplay />
-            <FileDisplay />
-          </Grid>
-        </TabPanel>
-      </TabContext>
-    </Box>
+      </Box>
     </>
   )
 }

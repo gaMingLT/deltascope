@@ -69,10 +69,11 @@ const DisplayImages = ({ directoryName }: props) => {
 
   return (
     <>
-      <h2>Images</h2>
-      <h3>Selected Images</h3>
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', padding: '1rem', margin: '1rem', border: '1px solid white', borderRadius: '5px' }} >
+    <Typography variant="h2" sx={{ fontSize: '2.25rem', fontWeight: 'bolder' }} >Images</Typography>
+      <Typography variant="h5" sx={{ fontSize: '1.5rem', fontWeight: 'bolder' }} >Selected Images</Typography>
       {/* <Typography variant="h3" sx={{ fontSize: 24, color: 'white', fontWeight: 'bold' }} >Selected Images</Typography> */}
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', border: '1px solid white', minWidth: 'max', minHeight: '10%' }}>
         {selectedImages.map((name, index) => (
           <Box
             key={index}
@@ -95,7 +96,7 @@ const DisplayImages = ({ directoryName }: props) => {
           </Box>
         ))}
       </Box>
-      <h3>Available Images</h3>
+      <Typography variant="h5" sx={{ fontSize: '1.5rem', fontWeight: 'bolder' }} >Available Images</Typography>
       <div>
         {availableImages.map((name, index) => (
           <Box
@@ -109,8 +110,8 @@ const DisplayImages = ({ directoryName }: props) => {
               color: "black",
               margin: '1rem',
               padding: '0.5rem',
-              border: '1px solid black',
-              borderRadius: '5px',
+              border: '2px solid black',
+              borderRadius: '3px',
               cursor: 'pointer'
             }}
           >
@@ -118,17 +119,20 @@ const DisplayImages = ({ directoryName }: props) => {
           </Box>
         ))}
       </div>
-      <Button variant="contained" sx={{ marginTop: '1rem' }} onClick={getAvailableImages}>
-        Retrieve Images
-      </Button>
-      <Button variant="contained" sx={{ marginTop: '1rem' }}  onClick={initiateDelta}>
-        Initiate Delta
-      </Button>
-      {
-        displayError ?
-          <Alert sx={{ marginTop: '1rem' }} severity="error">{ErrorMessage}</Alert>
-        : ''
-      }
+      <Box sx={{ display: 'flex', flexDirection: 'column' }} >
+        <Button variant="contained" sx={{ marginTop: '1rem' }} onClick={getAvailableImages}>
+          Retrieve Images
+        </Button>
+        <Button variant="contained" sx={{ marginTop: '1rem' }}  onClick={initiateDelta}>
+          Initiate Delta
+        </Button>
+        {
+          displayError ?
+            <Alert sx={{ marginTop: '1rem' }} severity="error">{ErrorMessage}</Alert>
+          : ''
+        }        
+      </Box>
+      </Box>
     </>
   );
 }

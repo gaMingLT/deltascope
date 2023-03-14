@@ -1,11 +1,10 @@
-from cli.methods import * 
-from cli.db import * 
-from cli.loger import CustomFormatter
+# from cli.methods import * # executeFls, imageInfo, prepareFilesystem, parseBodyFile, compareHashAndPath, retrieveFilesFromImages, createMacTimeLineFile, parseMacTimeLineFile
+# from cli.db import * # database_con, createImageFilesTable, inputValuesImageFilesTable, getImageFilesTableValues, createImageTimelineTable, inputValuesImageTimelineTable
+# from cli.loger import CustomFormatter
 
-# from methods import * 
-# from db import * 
-# from loger import CustomFormatter
-
+from methods import *
+from db import *
+from loger import CustomFormatter
 
 class CustomFormatter(logging.Formatter):
     """Logging colored formatter, adapted from https://stackoverflow.com/a/56944256/3638629"""

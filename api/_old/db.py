@@ -1,7 +1,6 @@
-import sqlite3, logging, os
+import sqlite3, logging
 from sqlite3 import Connection, DatabaseError, OperationalError
 from loger import CustomFormatter
-
 
 def create_db_logger():
   # Create custom logger logging all five levels
@@ -24,7 +23,7 @@ def create_db_logger():
 db_logger = create_db_logger()
 
 def database_con(path: str) -> Connection:
-  dbPath = "{0}/images_content.db".format(path.replace('.',''))
+  dbPath = "{0}/images_content.db".format(path)
   print('Path: ', dbPath)
   con = sqlite3.connect(dbPath)
   db_logger.info('Connected to database: {0}'.format(dbPath))

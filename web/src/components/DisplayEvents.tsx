@@ -106,7 +106,7 @@ const DisplayEvents = () => {
               backgroundColor: "lightblue",
             }}
           >
-            <TabList onChange={handleChange} aria-label="Events Menu">
+            <TabList onChange={handleChange} aria-label="Events Menu" variant="fullWidth" centered>
               <Tab label="Delta's" value="0" />
               <Tab label="Base Image" value="1" />
               <Tab label="New Image" value="2" />
@@ -117,10 +117,10 @@ const DisplayEvents = () => {
             <DataGrid rows={events.delta} columns={columns} />
           </TabPanel>
           <TabPanel value="1">
-            {/* <DataGrid rows={rows} columns={columns} /> */}
+            <DataGrid rows={events.base} columns={columns} />
           </TabPanel>
           <TabPanel value="2">
-            {/* <DataGrid rows={rows} columns={columns} /> */}
+            <DataGrid rows={events.next} columns={columns} />
           </TabPanel>
         </TabContext>
           {
