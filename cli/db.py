@@ -24,7 +24,7 @@ def create_db_logger():
 db_logger = create_db_logger()
 
 def database_con(path: str) -> Connection:
-  dbPath = "{0}/images_content.db".format(path.replace('.',''))
+  dbPath = "{0}/images_content.db".format(path)
   print('Path: ', dbPath)
   con = sqlite3.connect(dbPath)
   db_logger.info('Connected to database: {0}'.format(dbPath))
@@ -68,14 +68,8 @@ def getImageEventsValues(name: str, con):
   res = cur.execute("SELECT * FROM {0}_events".format(name))
   return res.fetchall()
 
-def createTimelineDeltaTable(names: str, con):
-  db_logger.debug('Creating table: {0}_{1}_events_delta'.format(names[0], names[1]))
-  cur = con.cursor()
-  cur.execute("CREATE TABLE {0}_{1}_events_delta(date,size,activity,permissions,uid,guid,inode,name)".format(names[0],  names[1]))
-  con.commit()
-
 def getImageEventsDelta(names: str, con):
   cur = con.cursor()
-  db_logger.debug('Retrieving delta values from database')
+  db_logger.debug('Retrieving delta values from database: {0}'.format(names))
   res = cur.execute("SELECT * FROM {0}_events WHERE date NOT IN (SELECT date FROM {1}_events)".format(names[1], names[0]))
   return res.fetchall()

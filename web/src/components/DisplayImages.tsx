@@ -2,15 +2,14 @@ import { Alert, Box, Button } from "@mui/material";
 import { Typography } from '@mui/material';
 import React, { useState } from 'react';
 
-interface props {
-  directoryName: string
-}
 
-const DisplayImages = ({ directoryName }: props) => {
+const DisplayImages = ({ setParentDirectoryName, setImages }: { setParentDirectoryName: any, setImages: any }) => {
   const [availableImages, setAvailableImages] = useState<Array<string>>([]);
   const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
   const [ErrorMessage, setDeltaError] = useState<string>('');
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
+  const [ message, setMessage ] = useState<string>('');
+  const [displayMessage, setDisplayMessage] = useState<boolean>(false);
 
   const getAvailableImages = () => {
     console.log('Fetching available images')
@@ -28,9 +27,10 @@ const DisplayImages = ({ directoryName }: props) => {
     if (selectedImages.length < 2) {
       setDisplayErrorMessage(true)
       setDeltaError('Unable to initiate delta - amount of selected images to low');
+      setTimeout(() => setDisplayErrorMessage(false),2000);
     }
     else {
-      const data = { 'images': selectedImages, 'directoryNames': directoryName }
+      const data = { 'images': selectedImages, 'directoryNames': '' }
       setDeltaError('');
       setDisplayErrorMessage(false)
 
@@ -43,10 +43,16 @@ const DisplayImages = ({ directoryName }: props) => {
       }).then(async (e) => {
         let data = await e.json()
         console.log('Data: ', data)
-        directoryName = data['directoryName']
+        setParentDirectoryName(data['directoryName'])
+        setImages(data['images'])
+        setMessage('Deltaing images - succesfull!')
+        setDisplayMessage(true)
+        setTimeout(() => setDisplayMessage(false),2000);
+
       }).catch((e) =>  {
         setDisplayErrorMessage(true)
         setDeltaError('Unable to initiate delta beteween selected images');
+        setTimeout(() => setDisplayErrorMessage(false),2000);
       })      
     }
   }
@@ -130,7 +136,12 @@ const DisplayImages = ({ directoryName }: props) => {
           displayError ?
             <Alert sx={{ marginTop: '1rem' }} severity="error">{ErrorMessage}</Alert>
           : ''
-        }        
+        }
+        {
+          displayMessage ?
+          <Alert sx={{ marginTop: '1rem' }} severity="success">{message}</Alert>
+          : ''
+        }  
       </Box>
       </Box>
     </>

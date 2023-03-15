@@ -1,7 +1,11 @@
 import hashlib, datetime, logging
 from os import mkdir, path, system
+
 from cli.loger import CustomFormatter
 from cli.db import *
+
+# from loger import CustomFormatter
+# from db import *
 
 def create_methods_logger():
   # Create custom logger logging all five levels

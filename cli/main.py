@@ -1,10 +1,10 @@
 import argparse
-from delta_scope import delta_images
+from delta_scope import delta_images_cli
 
 
 def main():
   args = parseargs()
-  directoryName = delta_images(args.images)
+  directoryName = delta_images_cli(args.images)
 
 
 def parseargs():

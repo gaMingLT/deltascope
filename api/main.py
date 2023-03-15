@@ -60,8 +60,8 @@ async def list_images():
 @app.post("/delta")
 async def initiate_delta_images(deltaScopeOptions: DeltaScopeOptions):
     custom_logger.debug('Initiating delta of images: {0}'.format(deltaScopeOptions.images))
-    directoryName = binding.initiate_delta_images(deltaScopeOptions.images)
-    return { 'options': '', 'directoryName': directoryName }
+    res = binding.initiate_delta_images(deltaScopeOptions.images)
+    return res
 
 
 # Get Events + Delta events

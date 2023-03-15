@@ -102,7 +102,7 @@ def delta_images_cli(images: list[str]):
     else:
       events['next'] = eventsData
   
-  createTimelineDeltaTable(names=tablesNames, con=dbCon)
+  # createTimelineDeltaTable(names=tablesNames, con=dbCon)
   eventsDelta = getImageEventsDelta(tablesNames, con=dbCon)
   # print('Delta', eventsDelta)
   
@@ -114,14 +114,14 @@ def delta_images_cli(images: list[str]):
   return outPath
 
 
-def delta_image_web(images: list[str]):
+def delta_image_web(paths: list[str], images: list[str]):
   main_logger.info('Main program')
   
-  outPath = prepareFilesystem(images, out='./output')
+  outPath = prepareFilesystem(paths, out='./output')
   dbCon = database_con(outPath)
   tablesNames = []
   
-  for path in images:
+  for path in paths:
     imageInfo(path=path)
     bodyFilePath = executeFls(path=path, out=outPath)
     
@@ -154,17 +154,19 @@ def delta_image_web(images: list[str]):
   fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
   retrieveFilesFromImages(deltas=fileDelta, out=outPath)
   
-  # Timeline events
-  createTimelineDeltaTable(names=tablesNames, con=dbCon)
-
-  # Close DB Connection
-  dbCon.close()
- 
-  return outPath
+  return { 'images': images, 'directoryName': outPath }
 
 
 def getEventsImages(tablesNames: list[str], directoryPath: str):
-  # outPath = "./outputs/{0}".format(directoryName)
   dbCon = database_con(path=directoryPath)
-  events = getEventsImages(tablesNames, dbCon)
+  newNames = []
+  for name in tablesNames:
+    newNames.append(name.replace('.img','').replace('-','_'))
+  
+  baseEvents =  getImageEventsValues(newNames[0],dbCon)
+  nextEvents = getImageEventsValues(newNames[1], dbCon)
+  deltaEvents = getImageEventsDelta(newNames, dbCon)
+  
+  events = { 'delta': deltaEvents, 'base': baseEvents, 'next': nextEvents }
+  
   return events

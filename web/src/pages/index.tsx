@@ -4,14 +4,14 @@ import Head from "next/head";
 import { Alert, Box, Button, Grid, Typography } from "@mui/material";
 import Timeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
-import FileDisplay from "~/components/DisplayFile";
 import DisplayImages from "~/components/DisplayImages";
-import ImageActions from "~/components/OptionsMenu";
+import OptionsMenu from "~/components/OptionsMenu";
 import DisplayEvents from "~/components/DisplayEvents";
 import { useState } from "react";
 
 const Home: NextPage = () => {
   const [directoryName, setDirectoryName] = useState<string>("");
+  const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
 
   return (
     <>
@@ -34,12 +34,12 @@ const Home: NextPage = () => {
               {/* File */}
               <Box sx={{}}>
                 <Upload />
-                <DisplayImages directoryName={directoryName} />
+                <DisplayImages setParentDirectoryName={setDirectoryName} setImages={setSelectedImages} />
                 {/* TODO: Add display files images */}
               </Box>
               {/* Menu & File Differences + Events */}
               <Box>
-                <ImageActions />
+                <OptionsMenu directory={directoryName} images={selectedImages} />
               </Box>
             </Box>
           </Box>

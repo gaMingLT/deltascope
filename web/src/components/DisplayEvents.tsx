@@ -6,24 +6,6 @@ import TabPanel from "@mui/lab/TabPanel";
 import { useState } from "react";
 
 
-interface Events {
-  'delta': GridRowsProp ,
-  'base': GridRowsProp ,
-  'next': GridRowsProp 
-}
-
-interface EventRowType {
-  id: number,
-  date: string,
-  size: number,
-  activity: string,
-  permissions: string,
-  uid: number,
-  guid: number,
-  inode: number,
-  name: string
-}
-
 const rowsDelta: GridRowsProp   = [
   {
     id: 1,
@@ -37,35 +19,6 @@ const rowsDelta: GridRowsProp   = [
     name: "/lost+found",
   },
 ];
-
-const rowsBase: GridRowsProp  = [
-  {
-    id: 1,
-    date: "Sat Feb 25 2023 16:27:26",
-    size: 16384,
-    activity: "macb",
-    permissions: "d/drwx------",
-    uid: 0,
-    guid: 0,
-    inode: 11,
-    name: "/lost+found",
-  },
-];
-
-const rowsNext: GridRowsProp  = [
-  {
-    id: 1,
-    date: "Sat Feb 25 2023 16:27:26",
-    size: 16384,
-    activity: "macb",
-    permissions: "d/drwx------",
-    uid: 0,
-    guid: 0,
-    inode: 11,
-    name: "/lost+found",
-  },
-];
-
 
 const columns: GridColDef[] = [
   {
@@ -93,11 +46,11 @@ const columnsTest: GridColDef[] = [
   { field: 'col2', headerName: 'Column 2', width: 150 },
 ];
 
-const DisplayEvents = () => {
+const DisplayEvents = ({ images, directoryName }: { images: Array<string>, directoryName: string }) => {
   const [value, setValue] = useState(0);
-  // const [events, setEvents] = useState({
-  //   'delta': rowsDelta, 'base': rowsBase, 'next': rowsNext
-  // })
+  const [events, setEvents] = useState({
+    'delta': [], 'base': [], 'next': []
+  })
   const [ErrorMessage, setDeltaError] = useState<string>('');
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
 
@@ -105,40 +58,30 @@ const DisplayEvents = () => {
     setValue(newValue);
   };
 
-  // const getEvents = () => {
-  //   const data = {
-  //     images: ["exp-changed.img", "another-change.img"],
-  //     directoryName: "./output/deltascope-2023-03-12_20:25:28-918008",
-  //   };
-  //   console.log("Fetching!")
-  //   fetch("http://localhost:8000/events/", {
-  //     method: 'POST',
-  //     body: JSON.stringify(data),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   }).then(async (e) => {
-  //     let data = await e.json()
-  //     setEvents(data)
-  //     console.log('Data: ', data)
-  //   }).catch((e) =>  {
-  //     setDisplayErrorMessage(true)
-  //     setDeltaError('Unable to retrieve events');
-  //   }) 
-  // }
+  const getEvents = () => {
+    console.log("Fetching!")
+    const data = { 'directoryName': directoryName, 'images': images }
+    console.log('Data - input: ', data)
+
+    fetch("http://localhost:8000/events/", {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(async (e) => {
+      let data = await e.json()
+      console.log('Data: ', data)
+    }).catch((e) =>  {
+      setDisplayErrorMessage(true)
+      setDeltaError('Unable to retrieve events');
+    }) 
+  }
 
   return (
     <>
-    <Box style={{ display: 'flex', flexDirection: 'column'  }} >
-      {/* <h1>Events</h1> */}
-      <div>
-        <p>Legend</p>
-        {/* Differentiate in different images based on color */}
-          {/* <Button variant="contained" sx={{ margin: '1rem' }}  onClick={getEvents}>
-            Get Events
-          </Button> */}
-      </div>
-      <Box sx={{ width: "100%", typography: "body1" }}>
+    <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center'  }} >
+      <Box sx={{ width: "100%", typography: "body1", marginTop: '2rem' }}>
         <TabContext value={value.toString()}>
           <Box
             sx={{
@@ -155,13 +98,13 @@ const DisplayEvents = () => {
           </Box>
           <TabPanel value="0">
             {/* FIXME: Data not being show on the page */}
-            <DataGrid sx={{ color: 'white', fontSize: '1.2rem' }} rows={rowsTest} columns={columnsTest} />
+            <DataGrid sx={{ color: 'white', fontSize: '1.2rem' }} rows={events.delta} columns={columns} />
           </TabPanel>
           <TabPanel value="1">
-            <DataGrid rows={rowsTest} columns={columnsTest} />
+            <DataGrid sx={{ color: 'white', fontSize: '1.2rem' }} rows={events.base} columns={columns} />
           </TabPanel>
           <TabPanel value="2">
-            <DataGrid rows={rowsTest} columns={columnsTest} />
+            <DataGrid sx={{ color: 'white', fontSize: '1.2rem' }} rows={events.next} columns={columns} />
           </TabPanel>
         </TabContext>
           {
@@ -170,6 +113,9 @@ const DisplayEvents = () => {
             : ''
           }
       </Box>
+      <Button variant="contained" sx={{ margin: '1rem' }}  onClick={getEvents}>
+            Get Events
+          </Button>
     </Box>
 
     </>

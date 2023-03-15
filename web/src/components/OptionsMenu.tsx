@@ -7,7 +7,7 @@ import DisplayEvents from "./DisplayEvents";
 import DisplayFiles from "./DisplayFiles";
 
 
-const ImageActions = () => {
+const ImageActions = ({ directory, images}: {directory: any, images: any}) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -28,7 +28,7 @@ const ImageActions = () => {
             </Box>
             <TabPanel value="0">
               <Grid container direction={"row"} spacing={4} item>
-                <DisplayEvents />
+                <DisplayEvents images={images} directoryName={directory}  />
               </Grid>
             </TabPanel>
             <TabPanel value="1">
