@@ -7,12 +7,12 @@ import { useState } from "react";
 
 
 interface Events {
-  'delta': Array<EventRowType>,
-  'base': Array<EventRowType>,
-  'next': Array<EventRowType>
+  'delta': GridRowsProp ,
+  'base': GridRowsProp ,
+  'next': GridRowsProp 
 }
 
-interface EventRowType extends GridRowsProp {
+interface EventRowType {
   id: number,
   date: string,
   size: number,
@@ -24,20 +24,48 @@ interface EventRowType extends GridRowsProp {
   name: string
 }
 
-// const rows: GridRowsProp = [
-//   {
-//     id: 1,
-//     date: "Sat Feb 25 2023 16:27:26",
-//     size: 16384,
-//     activity: "macb",
-//     permissions: "d/drwx------",
-//     uid: 0,
-//     guid: 0,
-//     inode: 11,
-//     name: "/lost+found",
-//   },
-//   // Sat Feb 25 2023 16:27:26	16384	macb	d/drwx------	0	0	11	/lost+found
-// ];
+const rowsDelta: GridRowsProp   = [
+  {
+    id: 1,
+    date: "Sat Feb 25 2023 16:27:26",
+    size: 16384,
+    activity: "macb",
+    permissions: "d/drwx------",
+    uid: 0,
+    guid: 0,
+    inode: 11,
+    name: "/lost+found",
+  },
+];
+
+const rowsBase: GridRowsProp  = [
+  {
+    id: 1,
+    date: "Sat Feb 25 2023 16:27:26",
+    size: 16384,
+    activity: "macb",
+    permissions: "d/drwx------",
+    uid: 0,
+    guid: 0,
+    inode: 11,
+    name: "/lost+found",
+  },
+];
+
+const rowsNext: GridRowsProp  = [
+  {
+    id: 1,
+    date: "Sat Feb 25 2023 16:27:26",
+    size: 16384,
+    activity: "macb",
+    permissions: "d/drwx------",
+    uid: 0,
+    guid: 0,
+    inode: 11,
+    name: "/lost+found",
+  },
+];
+
 
 const columns: GridColDef[] = [
   {
@@ -54,9 +82,22 @@ const columns: GridColDef[] = [
   { field: "name", headerName: "Name", width: 150 },
 ];
 
+const rowsTest: GridRowsProp = [
+  { id: 1, col1: 'Hello', col2: 'World' },
+  { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
+  { id: 3, col1: 'MUI', col2: 'is Amazing' },
+];
+
+const columnsTest: GridColDef[] = [
+  { field: 'col1', headerName: 'Column 1', width: 150 },
+  { field: 'col2', headerName: 'Column 2', width: 150 },
+];
+
 const DisplayEvents = () => {
   const [value, setValue] = useState(0);
-  const [events, setEvents] = useState<Events>({ 'delta': [], 'base': [], 'next': [] })
+  // const [events, setEvents] = useState({
+  //   'delta': rowsDelta, 'base': rowsBase, 'next': rowsNext
+  // })
   const [ErrorMessage, setDeltaError] = useState<string>('');
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
 
@@ -64,27 +105,27 @@ const DisplayEvents = () => {
     setValue(newValue);
   };
 
-  const getEvents = () => {
-    const data = {
-      images: ["exp-changed.img", "another-change.img"],
-      directoryName: "./output/deltascope-2023-03-12_20:25:28-918008",
-    };
-    console.log("Fetching!")
-    fetch("http://localhost:8000/events/", {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then(async (e) => {
-      let data = await e.json()
-      setEvents(data)
-      console.log('Data: ', data)
-    }).catch((e) =>  {
-      setDisplayErrorMessage(true)
-      setDeltaError('Unable to retrieve events');
-    }) 
-  }
+  // const getEvents = () => {
+  //   const data = {
+  //     images: ["exp-changed.img", "another-change.img"],
+  //     directoryName: "./output/deltascope-2023-03-12_20:25:28-918008",
+  //   };
+  //   console.log("Fetching!")
+  //   fetch("http://localhost:8000/events/", {
+  //     method: 'POST',
+  //     body: JSON.stringify(data),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   }).then(async (e) => {
+  //     let data = await e.json()
+  //     setEvents(data)
+  //     console.log('Data: ', data)
+  //   }).catch((e) =>  {
+  //     setDisplayErrorMessage(true)
+  //     setDeltaError('Unable to retrieve events');
+  //   }) 
+  // }
 
   return (
     <>
@@ -93,9 +134,9 @@ const DisplayEvents = () => {
       <div>
         <p>Legend</p>
         {/* Differentiate in different images based on color */}
-          <Button variant="contained" sx={{ margin: '1rem' }}  onClick={getEvents}>
+          {/* <Button variant="contained" sx={{ margin: '1rem' }}  onClick={getEvents}>
             Get Events
-          </Button>
+          </Button> */}
       </div>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value.toString()}>
@@ -114,13 +155,13 @@ const DisplayEvents = () => {
           </Box>
           <TabPanel value="0">
             {/* FIXME: Data not being show on the page */}
-            <DataGrid rows={events.delta} columns={columns} />
+            <DataGrid sx={{ color: 'white', fontSize: '1.2rem' }} rows={rowsTest} columns={columnsTest} />
           </TabPanel>
           <TabPanel value="1">
-            <DataGrid rows={events.base} columns={columns} />
+            <DataGrid rows={rowsTest} columns={columnsTest} />
           </TabPanel>
           <TabPanel value="2">
-            <DataGrid rows={events.next} columns={columns} />
+            <DataGrid rows={rowsTest} columns={columnsTest} />
           </TabPanel>
         </TabContext>
           {
@@ -128,7 +169,7 @@ const DisplayEvents = () => {
               <Alert sx={{ marginTop: '1rem' }} severity="error">{ErrorMessage}</Alert>
             : ''
           }
-      </Box>      
+      </Box>
     </Box>
 
     </>

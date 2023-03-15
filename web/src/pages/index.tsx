@@ -4,7 +4,7 @@ import Head from "next/head";
 import { Alert, Box, Button, Grid, Typography } from "@mui/material";
 import Timeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
-import FileDisplay from "~/components/File";
+import FileDisplay from "~/components/DisplayFile";
 import DisplayImages from "~/components/DisplayImages";
 import ImageActions from "~/components/OptionsMenu";
 import DisplayEvents from "~/components/DisplayEvents";

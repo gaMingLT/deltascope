@@ -4,7 +4,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { useState } from "react";
 import DisplayEvents from "./DisplayEvents";
-import FileDisplay from "./File";
+import DisplayFiles from "./DisplayFiles";
 
 
 const ImageActions = () => {
@@ -18,8 +18,8 @@ const ImageActions = () => {
     <>
       <Box sx={{ width: '100%' }}>
         <h1>Menu</h1>
-        <Box sx={{ width: '100%', typography: 'body1' }}>
-          <TabContext value={value.toString()}>
+        <Box sx={{ width: 'max-content', typography: 'body1' }}>
+          <TabContext value={value.toString()} >
             <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'lightblue' }}>
               <TabList onChange={handleChange} aria-label="lab API tabs example" variant="fullWidth">
                 <Tab label="Events" value="0" />
@@ -27,14 +27,13 @@ const ImageActions = () => {
               </TabList>
             </Box>
             <TabPanel value="0">
-              <Grid container direction={"row"} spacing={2} item>
+              <Grid container direction={"row"} spacing={4} item>
                 <DisplayEvents />
               </Grid>
             </TabPanel>
             <TabPanel value="1">
-              <Grid container direction={"row"} spacing={2} item>
-                <FileDisplay />
-                <FileDisplay />
+              <Grid container direction={"row"} spacing={4} item>
+                <DisplayFiles />
               </Grid>
             </TabPanel>
           </TabContext>
