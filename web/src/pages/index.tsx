@@ -82,9 +82,9 @@ const Home: NextPage = () => {
               </Grid>
 
               {/* Menu & File Differences + Events */}
-              {/* <Grid item xs={8}>
+              <Grid item xs={8}>
                 <ImageActions directory={directoryName} images={selectedImages} />
-              </Grid> */}
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

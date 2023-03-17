@@ -14,6 +14,9 @@ sys.path.append(parentdir)
 from cli import binding
 # from api.cli import binding
 
+class DeltaScopeDiffFiles(BaseModel):
+    directoryName: str
+
 class DeltaScopeOptions(BaseModel):
     images: list[str]
 
@@ -73,14 +76,15 @@ async def get_events(deltaScopeEvents: DeltaScopeEvents):
 
 
 # Get modified - changed - new files & dir
-@app.get("/objects/{directoryName}")
-async def get_objects(directoryName: str):
-    custom_logger.debug('Retrieving objects from latest comparison: {0}'.format(directoryName))
-    return {"objects": []}
+# @app.get("/objects/{directoryName}")
+# async def get_objects(directoryName: str):
+#     custom_logger.debug('Retrieving objects from latest comparison: {0}'.format(directoryName))
+#     return {"objects": []}
 
 
 # Get files which were modified - get content on web
-@app.get("/diff/files/{directoryName}")
-async def diffing_files(directoryName: str):
-    custom_logger.debug('Retrieving files from latest comparison: {0}'.format(directoryName))
-    return {"diff_files": []}
+@app.post("/diff/files")
+async def diffing_files(deltaScopeDiffFiles: DeltaScopeDiffFiles):
+    custom_logger.debug('Retrieving files from latest comparison: {0}'.format(deltaScopeDiffFiles.directoryName))
+    files = binding.get_different_files(deltaScopeDiffFiles.directoryName)
+    return {"diff_files": files}

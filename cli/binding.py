@@ -1,7 +1,7 @@
 from fastapi import File
+import base64, os
 from cli.delta_scope import delta_image_web, getEventsImages
 
-import os
 
 # TODO: Scrappe for now - while require streaming
 def place_uploaded_images(files: list[bytes], outPath: str):
@@ -38,3 +38,19 @@ def get_events(imageNames: list[str], directoryPath: str):
   events = getEventsImages(tablesNames=imageNames, directoryPath=directoryPath)
   
   return events
+
+
+def get_different_files(directoryPath: str):
+  imageFileNames = []
+  for file in os.listdir('{0}/diff'.format(directoryPath)):
+      imageFileNames.append(file)
+  
+  diffFiles = {}
+  
+  for filePath in imageFileNames:
+    f = open("{0}/diff/{1}".format(directoryPath, filePath),"rb")
+    fileContent = f.read()
+    fileContentBase = base64.b64encode(fileContent)
+    diffFiles[filePath] = fileContentBase
+  
+  return diffFiles

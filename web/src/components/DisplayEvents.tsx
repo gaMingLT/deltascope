@@ -103,14 +103,18 @@ const DisplayEvents = ({
         spacing={2}
         xs={8}
         direction={'column'}
-        // justifyContent={'center'}
-        // alignItems={'center'}
+        justifyContent={'center'}
+        alignItems={'center'}
+        item
+        zeroMinWidth
       >
-        <Grid container spacing={4} xs={8} direction={'row'}>
+        <Grid container spacing={4} xs={8} item direction={'column'} >
+
+        <Grid container spacing={4} xs={8} item direction={'column'} >
           <TabContext value={value.toString()}>
             <Grid
               item
-              xs={7}
+              xs={8}
               sx={{
                 borderBottom: 1,
                 borderColor: "divider",
@@ -151,7 +155,8 @@ const DisplayEvents = ({
               />
             </TabPanel>
           </TabContext>
-          {/* <Grid item xs={2} >
+          </Grid>
+          <Grid item xs={2} >
             {displayError ? (
               <Alert sx={{ marginTop: "1rem" }} severity="error">
                 {ErrorMessage}
@@ -159,13 +164,13 @@ const DisplayEvents = ({
             ) : (
               ""
             )}            
-          </Grid> */}
+          </Grid>
         </Grid>
-        {/* <Grid item xs={2} >
+        <Grid item xs={2} >
           <Button variant="contained" sx={{ margin: "1rem" }} onClick={getEvents}>
             Get Events
           </Button>          
-        </Grid> */}
+        </Grid>
 
       </Grid>
     </>

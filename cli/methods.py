@@ -93,10 +93,8 @@ def compareHashAndPath(data, con):
   # print('Compare: ', data)
   
   for img in data:
-    # hashAndPath = []
     hashPathMode = []
     for row in img[1]:
-      # hashAndPath.append((row[0], row[1]))
       hashPathMode.append((row[0],row[1], row[2] ,row[3]))
     hashAndPathImages.append((img[0], hashPathMode))
 
@@ -141,7 +139,7 @@ def compareHashAndPath(data, con):
   
   
     if nextRow not in baseImage and 'deleted' not in nextPath and nextRow[1] not in basePaths:
-      print('New', nextRow)
+      # print('New', nextRow)
       # TODO: Moved files are shown as new here - hash als changes :(
       differences['new'].append(nextRow)
       
@@ -214,8 +212,6 @@ def retrieveFilesFromImages(deltas, out: str):
   modified = deltas['differences']['modified']
   modifiedFilePaths = []
   
-  # print('Deltas files: ', deltas)
-  
   for mod in modified:
     fileOrDir = mod[3].split('/')[0]
     
@@ -235,13 +231,39 @@ def retrieveFilesFromImages(deltas, out: str):
   if not path.exists('{0}/{1}'.format(out,'icat')):
     mkdir('{0}/{1}'.format(out,'icat'))
   
-  # for name in imageNames:
-  #   for mod in modifiedFilePaths:
-  #     cmd = "icat ./images/{0}.img {1} > {2}/icat/{0}-{1}.txt".format(name.replace('_','-'), mod[2], out)
-  #     res = system(cmd)
+  print(modifiedFilePaths)
+  
+  # { 'file-name': [path-1,path-2] }
+  
+  differentPathNames = {}
+  
+  for name in imageNames:
+    for mod in modifiedFilePaths:
+      pathName = mod[1].split('/')[-1].split('.')[0]
+      fileName = mod[1].split('/')[-1]
+      if fileName in differentPathNames:
+        differentPathNames[fileName].append("{0}-{2}-{1}.txt".format(name.replace('_','-'), mod[2] ,pathName))
+      else:
+        differentPathNames[fileName] = ["{0}-{2}-{1}.txt".format(name.replace('_','-'), mod[2] ,pathName)]
       
-  #     if res == 0:
-  #       methods_logger.debug('Retrieving file succesfull!')
+      cmd = "icat /home/milan/dev/python-tool/deltascope-1/cli/images/{0}.img {1} > {2}/icat/{0}-{3}-{1}.txt".format(name.replace('_','-'), mod[2], out, pathName)
+      
+      res = system(cmd)
+      
+      if res == 0:
+        methods_logger.debug('Retrieving file succesfull!')
+  
+  if not path.exists('{0}/{1}'.format(out,'diff')):
+    mkdir('{0}/{1}'.format(out,'diff'))
+
+  for key in differentPathNames.keys():
+    paths = differentPathNames[key]
+    diffFileName = "{0}.txt".format(key.split('.')[0])
+    cmd = "diff -u {0}/icat/{1} {0}/icat/{2} > {0}/diff/{3}".format(out, paths[0], paths[1], diffFileName)
+    res = system(cmd)
+    if res == 0:
+      methods_logger.debug('Diffing of files succesfull!')
+
         
 
 def getEventsImages(tablesNames, con):

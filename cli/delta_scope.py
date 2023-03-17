@@ -144,8 +144,7 @@ def delta_image_web(paths: list[str], images: list[str]):
     # Add data to database file
     inputValuesImageTimelineTable(name=name, values=timelineData, con=dbCon)
 
-
-  # Files Differences
+  # Image Differences
   dataImages = []
   for tableName in tablesNames:
     fileData = getImageFilesValues(name=tableName, con=dbCon)
@@ -170,3 +169,7 @@ def getEventsImages(tablesNames: list[str], directoryPath: str):
   events = { 'delta': deltaEvents, 'base': baseEvents, 'next': nextEvents }
   
   return events
+
+
+def getDifferentFiles(tablesNames: list[str], directoryPath: str):
+  pass
