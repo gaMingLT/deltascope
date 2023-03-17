@@ -5,7 +5,7 @@ import { Alert, Box, Button, Grid, Typography } from "@mui/material";
 import Timeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
 import DisplayImages from "~/components/DisplayImages";
-import OptionsMenu from "~/components/OptionsMenu";
+import ImageActions from "~/components/ImageActions";
 import DisplayEvents from "~/components/DisplayEvents";
 import { useState } from "react";
 
@@ -21,29 +21,73 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box sx={{ backgroundColor: '#191919' ,display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', minWidth: '100vw' }} >
-          <Box sx={{ fontSize: '1.5rem', width: '100vw', position: 'absolute', top: 0, textAlign: 'center' }} >
-            <Typography  variant="h3" sx={{ fontWeight: '1.5rem', color: 'white', marginTop: '1rem'}} >Delta Scope</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', columnGap: '1rem' }} >
+        <Grid
+          container
+          spacing={2}
+          xs={12}
+          direction={"row"}
+          justifyContent="center"
+          alignItems="center"
+          height={"100vh"}
+        >
+          <Grid item xs={12}>
+            <Typography
+              variant="h3"
+              sx={{ fontWeight: "1.5rem", color: "black", marginTop: "1rem" }}
+            >
+              Delta Scope
+            </Typography>
+          </Grid>
+
+          <Grid
+            container
+            spacing={2}
+            xs={12}
+            direction={"row"}
+            justifyContent="center"
+            alignItems="center"
+          >
             {/* Timeline */}
-            <Box sx={{ display: 'flex', flexDirection: 'row' ,justifyContent: 'center', alignItems: 'center' }}>
+            {/* <Grid container xs={12} justifyContent="center">
               <Timeline />
-            </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
-              {/* File */}
-              <Box sx={{}}>
+            </Grid> */}
+
+            <Grid container spacing={2} xs={12}>
+              {/* Get images & initiate delta */}
+              <Grid
+                container
+                spacing={2}
+                xs={4}
+                direction={"row"}
+                justifyContent="center"
+                alignItems="center"
+                sx={{ border: "1px solid red", padding: "1rem" }}
+                zeroMinWidth
+              >
+                <Typography
+                  variant="h2"
+                  sx={{
+                    fontSize: "2.25rem",
+                    fontWeight: "bolder",
+                    textAlign: "center",
+                  }}
+                >
+                  Images
+                </Typography>
                 <Upload />
-                <DisplayImages setParentDirectoryName={setDirectoryName} setImages={setSelectedImages} />
-                {/* TODO: Add display files images */}
-              </Box>
+                <DisplayImages
+                  setParentDirectoryName={setDirectoryName}
+                  setImages={setSelectedImages}
+                />
+              </Grid>
+
               {/* Menu & File Differences + Events */}
-              <Box>
-                <OptionsMenu directory={directoryName} images={selectedImages} />
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+              {/* <Grid item xs={8}>
+                <ImageActions directory={directoryName} images={selectedImages} />
+              </Grid> */}
+            </Grid>
+          </Grid>
+        </Grid>
       </main>
     </>
   );

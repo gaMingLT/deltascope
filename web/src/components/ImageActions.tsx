@@ -16,29 +16,40 @@ const ImageActions = ({ directory, images}: {directory: any, images: any}) => {
 
   return (
     <>
-      <Box sx={{ width: '100%' }}>
-        <h1>Menu</h1>
-        <Box sx={{ width: 'max-content', typography: 'body1' }}>
+      <Grid container spacing={2} xs={8} direction={'column'} >
+
+        <Typography
+          variant="h5"
+          sx={{ fontSize: "1.5rem", fontWeight: "bolder", textAlign: 'center' }}
+        >
+          Menu
+        </Typography>
+
+        <Grid container spacing={2} xs={8} direction="row" >
           <TabContext value={value.toString()} >
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'lightblue' }}>
+
+            <Grid item xs={8} sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'lightblue' }} >
               <TabList onChange={handleChange} aria-label="lab API tabs example" variant="fullWidth">
                 <Tab label="Events" value="0" />
                 <Tab label="Files" value="1" />
               </TabList>
-            </Box>
+            </Grid>
+
             <TabPanel value="0">
               <Grid container direction={"row"} spacing={4} item>
                 <DisplayEvents images={images} directoryName={directory}  />
               </Grid>
             </TabPanel>
+
             <TabPanel value="1">
               <Grid container direction={"row"} spacing={4} item>
                 <DisplayFiles />
               </Grid>
             </TabPanel>
           </TabContext>
-        </Box>
-      </Box>
+
+        </Grid>
+      </Grid>
     </>
   )
 }
