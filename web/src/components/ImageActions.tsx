@@ -48,7 +48,7 @@ const ImageActions = ({
           spacing={4}
           xs={8}
           item
-          direction="row"
+          direction="column"
         >
           <TabContext value={value.toString()}>
             <Grid

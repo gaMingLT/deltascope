@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from "@mui/material"
+import { Alert, Box, Button, Grid } from "@mui/material"
 import { useState } from "react";
 import FileDisplay from "./FileDisplay"
 
@@ -8,6 +8,9 @@ const DisplayFiles = ({ directoryName }: {
 }) => { 
 
   const [files, setFiles] = useState<any>({})
+  const [directoryPath, setDirectoryName] = useState<string>(directoryName)
+  const [ErrorMessage, setDeltaError] = useState<string>("");
+  const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
 
   const baseToFile = (base: any): any => {
     console.log('Base: ', atob(base));
@@ -15,7 +18,14 @@ const DisplayFiles = ({ directoryName }: {
   }
 
   const getFiles = () => {
-    const data = { directoryName: directoryName };
+    const data = { "directoryName": directoryName };
+
+    if (!directoryName) {
+      setDisplayErrorMessage(true);
+      setDeltaError("No images selected for comparison");
+      setTimeout(() => setDisplayErrorMessage(false), 5000);
+      return;
+    } 
 
     fetch("http://localhost:8000/diff/files", {
       method: "POST",
@@ -30,7 +40,9 @@ const DisplayFiles = ({ directoryName }: {
         setFiles(data["diff_files"])
       })
       .catch((e) => {
-
+        setDisplayErrorMessage(true);
+        setDeltaError("Unable to retrieve files");
+        setTimeout(() => setDisplayErrorMessage(false), 5000);
       });
   }
 
@@ -39,7 +51,8 @@ const DisplayFiles = ({ directoryName }: {
 
   return(
   <>
-    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }} >
+    {/* <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }} > */}
+      <Grid item container spacing={2} zeroMinWidth >
         {
           Object.keys(files).map((key: string, index: number) => { 
             return (
@@ -49,8 +62,16 @@ const DisplayFiles = ({ directoryName }: {
         }        
         <Button variant="contained" sx={{ margin: "1rem" }} onClick={getFiles}>
             Get Files
-        </Button>    
-    </Box>
+        </Button>
+        {displayError ? (
+            <Alert sx={{ marginTop: "1rem" }} severity="error">
+              {ErrorMessage}
+            </Alert>
+          ) : (
+            ""
+          )}
+      </Grid>
+    {/* </Box> */}
   </>
   )
 }

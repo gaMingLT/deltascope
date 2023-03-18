@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Grid } from "@mui/material";
 import { Typography } from "@mui/material";
 import React, { useState } from "react";
 
@@ -15,6 +15,7 @@ const DisplayImages = ({
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [displayMessage, setDisplayMessage] = useState<boolean>(false);
+  const [displayLoading, setDisplayLoading] = useState<boolean>(false);
 
   const getAvailableImages = () => {
     console.log("Fetching available images");
@@ -39,6 +40,7 @@ const DisplayImages = ({
     } else {
       const data = { images: selectedImages, directoryNames: "" };
 
+      setDisplayLoading(true)
       fetch("http://localhost:8000/delta", {
         method: "POST",
         body: JSON.stringify(data),
@@ -54,6 +56,7 @@ const DisplayImages = ({
           setMessage("Deltaing images - succesfull!");
           setDisplayMessage(true);
           setTimeout(() => setDisplayMessage(false), 5000);
+          setDisplayLoading(false)
         })
         .catch((e) => {
           setDisplayErrorMessage(true);
@@ -196,6 +199,14 @@ const DisplayImages = ({
           ) : (
             ""
           )}
+          {displayLoading ? (
+            <CircularProgress
+            color="primary"
+            size="md"
+          />
+          ) : ("")
+
+          }
         </Grid>
 
       </Grid>
