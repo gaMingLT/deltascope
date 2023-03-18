@@ -98,80 +98,72 @@ const DisplayEvents = ({
 
   return (
     <>
-      <Grid
-        container
-        spacing={2}
-        xs={8}
-        direction={'column'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        item
-        zeroMinWidth
-      >
-        <Grid container spacing={4} xs={8} item direction={'column'} >
+      <Grid container spacing="2">
+        <Grid item>
+        <TabContext value={value.toString()}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <TabList
+                    onChange={handleChange}
+                    aria-label="lab API tabs example"
+                  >
+                    <Tab label="Delta's" value="0" />
+                    <Tab label="Base Image" value="1" />
+                    <Tab label="New Image" value="2" />
+                  </TabList>
+                </Box>
 
-        <Grid container spacing={4} xs={8} item direction={'column'} >
-          <TabContext value={value.toString()}>
-            <Grid
-              item
-              xs={8}
-              sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                backgroundColor: "lightblue",
-              }}
-            >
-              <TabList
-                onChange={handleChange}
-                aria-label="Events Menu"
-                variant="fullWidth"
-                centered
-              >
-                <Tab label="Delta's" value="0" />
-                <Tab label="Base Image" value="1" />
-                <Tab label="New Image" value="2" />
-              </TabList>
-            </Grid>
-            <TabPanel value="0">
-              {/* FIXME: Data not being show on the page */}
-              <DataGrid
-                sx={{ fontSize: "1.2rem" }}
-                rows={events.delta}
-                columns={columns}
-              />
-            </TabPanel>
-            <TabPanel value="1">
-              <DataGrid
-                sx={{ fontSize: "1.2rem" }}
-                rows={events.base}
-                columns={columns}
-              />
-            </TabPanel>
-            <TabPanel value="2">
-              <DataGrid
-                sx={{ fontSize: "1.2rem" }}
-                rows={events.next}
-                columns={columns}
-              />
-            </TabPanel>
-          </TabContext>
-          </Grid>
-          <Grid item xs={2} >
-            {displayError ? (
-              <Alert sx={{ marginTop: "1rem" }} severity="error">
-                {ErrorMessage}
-              </Alert>
-            ) : (
-              ""
-            )}            
-          </Grid>
-        </Grid>
-        <Grid item xs={2} >
-          <Button variant="contained" sx={{ margin: "1rem" }} onClick={getEvents}>
-            Get Events
-          </Button>          
-        </Grid>
+                <TabPanel value="0">
+                  <Box>
+                    <DataGrid
+                      sx={{ fontSize: "1.2rem" }}
+                      rows={events.delta}
+                      columns={columns}
+                    />                    
+                  </Box>
+                </TabPanel>
 
+                <TabPanel value="1">
+                  <Box>
+                    <DataGrid
+                        sx={{ fontSize: "1.2rem" }}
+                        rows={events.base}
+                        columns={columns}
+                      />                    
+                  </Box>
+                </TabPanel>
+
+                <TabPanel value="2">
+                  <Box>
+                    <DataGrid
+                        sx={{ fontSize: "1.2rem" }}
+                        rows={events.next}
+                        columns={columns}
+                      />                    
+                  </Box>
+                </TabPanel>
+
+              </TabContext>
+        </Grid>
+        <Grid item container spacing="2" direction="column">
+          <Grid item>
+            <Box>
+              <Button variant="contained" sx={{ margin: "1rem" }} onClick={getEvents}>
+                Get Events
+              </Button>                
+            </Box>
+          </Grid>
+          <Grid item>
+            <Box>
+              {displayError ? (
+                <Alert sx={{ marginTop: "1rem" }} severity="error">
+                  {ErrorMessage}
+                </Alert>
+              ) : (
+                ""
+              )}
+            </Box>
+          </Grid>
+        </Grid>       
       </Grid>
     </>
   );

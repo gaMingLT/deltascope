@@ -93,7 +93,7 @@ const DisplayImages = ({
               {selectedImages.map((name, index) => (
                 <Grid item key={index} onClick={addImageForComparison} >
                   <Box
-                    py={0.5} px={0.5} borderRadius="10px" bgcolor="white" data-name={name}
+                    py={0.75} px={0.75} borderRadius="10px" bgcolor="white" data-name={name}
                   >
                     {name}
                   </Box>

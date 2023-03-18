@@ -1,4 +1,4 @@
-import { Box, Grid, TextareaAutosize } from "@mui/material";
+import { Box, Grid, TextareaAutosize, Typography } from "@mui/material";
 import Textarea from '@mui/joy/Textarea';
 import { useState } from "react";
 
@@ -28,10 +28,20 @@ const FileDisplay = ({ fileBlob }: { fileBlob: Blob }) => {
 
   return (
     <>
-      <Grid item container spacing={5} >
-        <h1>File: {}</h1>
-        <Grid item >
-          <TextareaAutosize minRows={5} onClick={loadFile} value={fileContent?.toString()} />
+      <Grid item container spacing={4} xs direction="column">
+        <Grid item>
+          <Box>
+            <Typography variant="h5" >File Name here</Typography>
+          </Box>
+        </Grid>
+        <Grid item>
+          <Box>
+            <TextareaAutosize
+                minRows={5}
+                onClick={loadFile}
+                value={fileContent?.toString()}
+              />
+          </Box>
         </Grid>
       </Grid>
     </>

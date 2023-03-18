@@ -46,7 +46,7 @@ const Home: NextPage = () => {
             />
 
             {/* Events */}
-            
+            <ImageActions directory={directoryName} images={selectedImages} />
           </Grid>
 
         </Grid>

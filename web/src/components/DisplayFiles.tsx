@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid } from "@mui/material"
+import { Alert, Box, Button, Grid, Typography } from "@mui/material"
 import { useState } from "react";
 import FileDisplay from "./FileDisplay"
 
@@ -51,27 +51,56 @@ const DisplayFiles = ({ directoryName }: {
 
   return(
   <>
-    {/* <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }} > */}
-      <Grid item container spacing={2} zeroMinWidth >
+    <Grid container /*spacing={2} */ columnGap={5} >
+      <Grid item container spacing={2}  direction="column" xs={2} style={{ border: '2px solid white', borderRadius: '5px', padding: '0.5rem' }} >
+        <Grid item>
+          <Box >
+            <Typography variant="h5" >Modified Files</Typography>
+          </Box>
+        </Grid>
+        <Grid item container spacing="2" direction="column">
+          <Grid item>
+            <Box bgcolor="pink" px={0.5} py={0.5} >
+              Files Name 1
+            </Box>
+          </Grid>
+          <Grid item>
+            <Box bgcolor="pink" px={0.5} py={0.5}>
+              Files Name 2
+            </Box>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item container spacing={2}  xs={6} style={{ border: '2px solid white', borderRadius: '5px' }} >
         {
           Object.keys(files).map((key: string, index: number) => { 
             return (
               <FileDisplay key={index} fileBlob={new Blob(baseToFile(files[key]))} />
             )
           })
-        }        
-        <Button variant="contained" sx={{ margin: "1rem" }} onClick={getFiles}>
-            Get Files
-        </Button>
-        {displayError ? (
-            <Alert sx={{ marginTop: "1rem" }} severity="error">
-              {ErrorMessage}
-            </Alert>
-          ) : (
-            ""
-          )}
+        }
       </Grid>
-    {/* </Box> */}
+      <Grid item container spacing={2} direction="column">
+        <Grid item>
+          <Box>
+            <Button variant="contained" sx={{ margin: "1rem" }} onClick={getFiles}>
+              Get Files
+          </Button>
+          </Box>
+        </Grid>
+        <Grid>
+          <Box>
+            {displayError ? (
+              <Alert sx={{ marginTop: "1rem" }} severity="error">
+                {ErrorMessage}
+              </Alert>
+            ) : (
+              ""
+            )}
+          </Box>
+        </Grid>
+      </Grid>
+    </Grid>
   </>
   )
 }
