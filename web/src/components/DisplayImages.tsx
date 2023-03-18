@@ -40,7 +40,7 @@ const DisplayImages = ({
     } else {
       const data = { images: selectedImages, directoryNames: "" };
 
-      setDisplayLoading(true)
+      setDisplayLoading(true);
       fetch("http://localhost:8000/delta", {
         method: "POST",
         body: JSON.stringify(data),
@@ -56,7 +56,7 @@ const DisplayImages = ({
           setMessage("Deltaing images - succesfull!");
           setDisplayMessage(true);
           setTimeout(() => setDisplayMessage(false), 5000);
-          setDisplayLoading(false)
+          setDisplayLoading(false);
         })
         .catch((e) => {
           setDisplayErrorMessage(true);
@@ -80,7 +80,106 @@ const DisplayImages = ({
 
   return (
     <>
-      <Grid
+      <Grid item xs={4}>
+        <Box bgcolor="primary.light" padding="1rem">
+          <Box textAlign="center">
+            <h2>Images</h2>
+          </Box>
+          <Grid item style={{ padding: "1rem" }}>
+            <Box textAlign="center">
+              <h3>Selected Images</h3>
+            </Box>
+            <Grid item container direction="row" spacing="10">
+              {selectedImages.map((name, index) => (
+                <Grid item key={index} onClick={addImageForComparison} >
+                  <Box
+                    py={0.5} px={0.5} borderRadius="10px" bgcolor="white" data-name={name}
+                  >
+                    {name}
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Grid item style={{ padding: "1rem" }}>
+            <Box textAlign="center">
+              <h3>Available Images</h3>
+            </Box>
+            <Grid
+              item
+              container
+              direction="column"
+              spacing="8"
+              style={{ textAlign: "center" }}
+            >
+              {availableImages.map((name, index) => (
+                <Grid item key={index} onClick={addImageForComparison}>
+                  <Box
+                    py={0.5} px={1} bgcolor="white" data-name={name}
+                  >
+                    {name}
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Grid item container direction="column" rowGap="1rem">
+            <Grid item>
+              <Box style={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  variant="contained"
+                  sx={{ marginTop: "1rem" }}
+                  onClick={getAvailableImages}
+                >
+                  Retrieve Images
+                </Button>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box style={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  variant="contained"
+                  sx={{ marginTop: "1rem" }}
+                  onClick={initiateDelta}
+                >
+                  Initiate Delta
+                </Button>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box>
+                {displayError ? (
+                  <Alert sx={{ marginTop: "1rem" }} severity="error">
+                    {ErrorMessage}
+                  </Alert>
+                ) : (
+                  ""
+                )}
+              </Box>
+              <Box>
+                {displayMessage ? (
+                  <Alert sx={{ marginTop: "1rem" }} severity="success">
+                    {message}
+                  </Alert>
+                ) : (
+                  ""
+                )}
+              </Box>
+              <Box>
+                {displayLoading ? (
+                  <CircularProgress
+                    color="primary"
+                    size="md"
+                  />
+                ) : ("")
+                }
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+
+      {/* <Grid
         container
         spacing={8}
         direction={"column"}
@@ -89,7 +188,7 @@ const DisplayImages = ({
         }
         zeroMinWidth
       >
-        {/* Selected Images */}
+
         <Grid container spacing={2} direction="column" justifyContent="center" alignItems="center" sx={{ marginBottom: '1.5rem' }} >
           <Typography
             variant="h5"
@@ -130,7 +229,7 @@ const DisplayImages = ({
         </Grid>
 
 
-        {/* Available Images! */}
+
         <Grid container spacing={4} direction="column" justifyContent="center" alignItems="center" zeroMinWidth>
           <Typography
             variant="h5"
@@ -209,7 +308,7 @@ const DisplayImages = ({
           }
         </Grid>
 
-      </Grid>
+      </Grid> */}
     </>
   );
 };

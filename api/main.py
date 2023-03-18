@@ -12,7 +12,6 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
  
 from cli import binding
-# from api.cli import binding
 
 class DeltaScopeDiffFiles(BaseModel):
     directoryName: str
