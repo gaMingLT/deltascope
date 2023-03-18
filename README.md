@@ -5,10 +5,6 @@
 - Upload file and place in correct directory
 
 ## CLI
-- Mactime timeline - testing
-- Update parsing path and hash
-- File Difference
-- Create binding for CLI interaction with API
 
 ## WEB
 - Upload images
@@ -18,3 +14,6 @@
   - Real Data
 - Display file difference
 - Display Events between 2 states
+
+
+Codepen: https://codesandbox.io/s/youthful-ellis-2w798t?file=/index.js:1952-1966 
