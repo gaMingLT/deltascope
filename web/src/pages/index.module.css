@@ -152,3 +152,15 @@
 .rowHeader {
   font-weight: bold;
 }
+
+.vis-item.base {
+  background-color: "green"
+}
+
+.vis-item.next {
+  background-color: "blue"
+}
+
+.vis-item.delta {
+  background-color: "pink"
+}

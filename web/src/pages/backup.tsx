@@ -2,7 +2,7 @@ import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { Alert, Box, Button, Grid, Typography } from "@mui/material";
-import Timeline from "~/components/Timeline";
+import DisplayTimeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
 import DisplayImages from "~/components/DisplayImages";
 import ImageActions from "~/components/ImageActions";
