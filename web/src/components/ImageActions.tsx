@@ -9,9 +9,11 @@ import DisplayFiles from "./DisplayFiles";
 const ImageActions = ({
   directory,
   images,
+  setEventsParent,
 }: {
   directory: any;
   images: any;
+  setEventsParent: any;
 }) => {
   const [value, setValue] = useState(0);
 
@@ -39,7 +41,7 @@ const ImageActions = ({
                 </Box>
 
                 <TabPanel value="0">
-                  <DisplayEvents images={images} directoryName={directory} />
+                  <DisplayEvents images={images} directoryName={directory} setEventsParent={setEventsParent}  />
                 </TabPanel>
 
                 <TabPanel value="1">

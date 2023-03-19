@@ -14,6 +14,7 @@ def place_uploaded_images(files: list[bytes], outPath: str):
 
 
 def list_uploaded_images():
+  
   imageFileNames = []
   for file in os.listdir('/home/milan/dev/python-tool/deltascope-1/cli/images/'):
       imageFileNames.append(file)

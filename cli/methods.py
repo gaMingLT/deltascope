@@ -29,7 +29,7 @@ methods_logger = create_methods_logger()
 
 
 def imageInfo(path: str):
-  methods_logger.debug('Image info: {0}'.format(path))
+  methods_logger.debug('[METHODS] - Image info: {0}'.format(path))
   
   BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
   md5 = hashlib.md5()
@@ -45,7 +45,7 @@ def imageInfo(path: str):
 
 
 def prepareFilesystem(paths, out: str) -> str:
-  methods_logger.debug('Preparing filesystem: Images:  {0} - Out: {1}'.format(paths,out))
+  methods_logger.debug('[METHODS] - Preparing filesystem: Images:  {0} - Out: {1}'.format(paths,out))
   
   # Create output directory for files used in differentiating
   if not path.exists(out):
@@ -60,20 +60,20 @@ def prepareFilesystem(paths, out: str) -> str:
 
 
 def executeFls(path: str, out: str) -> str:
-  methods_logger.info('Retrieving files from image using FLS')
+  methods_logger.info('[METHODS] - Retrieving files from image using FLS')
   
   bodyFilePath = "{0}/{1}.txt".format(out, path.split('/')[-1].split('.')[0])
   cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/', path ,bodyFilePath)
   res = system(cmd)
   
   if res == 0:
-    methods_logger.info('FLS Execution - Succes!')
+    methods_logger.info('[METHODS] - FLS Execution - Succes!')
     
   return bodyFilePath
 
 
 def parseBodyFile(path: str, out: str) -> list:
-  methods_logger.info('Parsing body file')
+  methods_logger.info('[METHODS] - Parsing body file')
   
   f = open(path, "r")
   data = []
@@ -87,7 +87,7 @@ def parseBodyFile(path: str, out: str) -> list:
 
 
 def compareHashAndPath(data, con):
-  methods_logger.info('Comparing hash and path: ')
+  methods_logger.info('[METHODS] - Comparing hash and path')
   hashAndPathImages = []
   
   # print('Compare: ', data)
@@ -183,6 +183,7 @@ def compareHashAndPath(data, con):
 
 
 def createMacTimeLineFile(name, out: str):
+  methods_logger.info('[METHODS] - Creating MAC Timeline from FLS Body file')
   
   if not path.exists('{0}/{1}'.format(out,'timelines')):
     mkdir('{0}/{1}'.format(out,'timelines'))
@@ -191,10 +192,11 @@ def createMacTimeLineFile(name, out: str):
   res = system(cmd)
   
   if res == 0:
-    methods_logger.info('Completed creating mactime line file for {0}'.format(name))
+    methods_logger.info('[METHODS] - Completed creating mactime line file for {0}'.format(name))
 
 
 def parseMacTimeLineFile(name, out: str):
+  methods_logger.info('[METHODS] - Parsing MAC Timeline file')
   path = "{1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
   
   f = open(path, "r")
@@ -209,6 +211,7 @@ def parseMacTimeLineFile(name, out: str):
 
 
 def retrieveFilesFromImages(deltas, out: str):
+  methods_logger.info('[METHODS] - Retrieving ``modified`` files from image')
   modified = deltas['differences']['modified']
   modifiedFilePaths = []
   
@@ -251,7 +254,7 @@ def retrieveFilesFromImages(deltas, out: str):
       res = system(cmd)
       
       if res == 0:
-        methods_logger.debug('Retrieving file succesfull!')
+        methods_logger.debug('[METHODS] - Retrieving file succesfull!')
   
   if not path.exists('{0}/{1}'.format(out,'diff')):
     mkdir('{0}/{1}'.format(out,'diff'))
@@ -262,11 +265,12 @@ def retrieveFilesFromImages(deltas, out: str):
     cmd = "diff -u {0}/icat/{1} {0}/icat/{2} > {0}/diff/{3}".format(out, paths[0], paths[1], diffFileName)
     res = system(cmd)
     if res == 0:
-      methods_logger.debug('Diffing of files succesfull!')
+      methods_logger.debug('[METHODS] - Diffing of files succesfull!')
 
         
 
 def getEventsImages(tablesNames, con):
+  methods_logger.info('[METHODS] - Retrieving events from images')
   events = { 'base': [], 'next': [], 'delta': [] }
   
   for index, tableName in enumerate(tablesNames):

@@ -12,61 +12,39 @@ import {
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { useState } from "react";
-
-const rowsDelta: GridRowsProp = [
-  {
-    id: 1,
-    date: "Sat Feb 25 2023 16:27:26",
-    size: 16384,
-    activity: "macb",
-    permissions: "d/drwx------",
-    uid: 0,
-    guid: 0,
-    inode: 11,
-    name: "/lost+found",
-  },
-];
+import { useEffect, useState } from "react";
 
 const columns: GridColDef[] = [
   {
     field: "date",
     headerName: "Date",
-    width: 150,
+    width: 250,
   },
-  { field: "size", headerName: "Size", width: 150 },
-  { field: "activity", headerName: "Acitvity", width: 150 },
-  { field: "permissions", headerName: "Permissions", width: 150 },
-  { field: "uid", headerName: "User ID", width: 150 },
-  { field: "guid", headerName: "Group ID", width: 150 },
-  { field: "inode", headerName: "Inode", width: 150 },
+  { field: "size", headerName: "Size", width: 100 },
+  { field: "activity", headerName: "Acitvity", width: 125 },
+  { field: "permissions", headerName: "Permissions", width: 125 },
+  { field: "uid", headerName: "User ID", width: 100 },
+  { field: "guid", headerName: "Group ID", width: 100 },
+  { field: "inode", headerName: "Inode", width: 75 },
   { field: "name", headerName: "Name", width: 150 },
-];
-
-const rowsTest: GridRowsProp = [
-  { id: 1, col1: "Hello", col2: "World" },
-  { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-  { id: 3, col1: "MUI", col2: "is Amazing" },
-];
-
-const columnsTest: GridColDef[] = [
-  { field: "col1", headerName: "Column 1", width: 150 },
-  { field: "col2", headerName: "Column 2", width: 150 },
 ];
 
 const DisplayEvents = ({
   images,
   directoryName,
+  setEventsParent
 }: {
   images: Array<string>;
   directoryName: string;
+  setEventsParent: any;
 }) => {
   const [value, setValue] = useState(0);
   const [events, setEvents] = useState({
-    delta: [],
-    base: [],
-    next: [],
+    delta: new Array(),
+    base: new Array(),
+    next: new Array(),
   });
+  // const [eventsSet, setEventsSet] = useState<boolean>(false);
   const [ErrorMessage, setDeltaError] = useState<string>("");
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
 
@@ -74,10 +52,71 @@ const DisplayEvents = ({
     setValue(newValue);
   };
 
+  // useEffect(() => {
+  //   if(eventsSet) {
+  //     eventsToTable(events)
+  //   }
+  // })
+
+  const eventsToTable = (events: any) => {
+    console.log('Events to table!', events)
+    const tempEventsData = {
+      delta: new Array(),
+      base: new Array(),
+      next: new Array(),
+    };
+
+    
+    Object.keys(events).map((key: string) => {
+
+        const eventsType = events[key]
+        let idCounter = 0;
+        let previousDate = "";
+        eventsType.forEach((element: any) => {
+          
+          let itemToAdd: any = {
+            id: idCounter, 
+            date: element[0] ? element[0] : previousDate,
+            size: element[1],
+            activity: element[2],
+            permissions: element[3],
+            uid: element[4],
+            guid: element[5],
+            inode: element[6],
+            name: element[7]
+          }
+
+          element[0] ? previousDate = element[0] : ""
+
+          switch(key) {
+            case "delta":
+              tempEventsData.delta.push(itemToAdd);
+              break;
+            case "next":
+              tempEventsData.next.push(itemToAdd);
+              break;
+            case "base":
+              tempEventsData.base.push(itemToAdd);
+              break;
+            default:
+              break;
+          }
+          
+          idCounter++;
+        })
+
+        // setEventsSet(true)
+    })
+
+    console.log("Events data - mapped: ", tempEventsData)
+    setEvents(tempEventsData)
+
+    console.log("Events: ", events.delta)
+    
+  }
+
   const getEvents = () => {
-    console.log("Fetching!");
     const data = { directoryName: directoryName, images: images };
-    console.log("Data - input: ", data);
 
     fetch("http://localhost:8000/events/", {
       method: "POST",
@@ -88,7 +127,8 @@ const DisplayEvents = ({
     })
       .then(async (e) => {
         let data = await e.json();
-        console.log("Data: ", data);
+        setEventsParent(data)
+        eventsToTable(data.events);
       })
       .catch((e) => {
         setDisplayErrorMessage(true);
@@ -113,7 +153,7 @@ const DisplayEvents = ({
                 </Box>
 
                 <TabPanel value="0">
-                  <Box>
+                  <Box height={'350px'} width='100%'>
                     <DataGrid
                       sx={{ fontSize: "1.2rem" }}
                       rows={events.delta}
@@ -123,7 +163,7 @@ const DisplayEvents = ({
                 </TabPanel>
 
                 <TabPanel value="1">
-                  <Box>
+                  <Box height={'350px'}  width='100%'>
                     <DataGrid
                         sx={{ fontSize: "1.2rem" }}
                         rows={events.base}
@@ -133,7 +173,7 @@ const DisplayEvents = ({
                 </TabPanel>
 
                 <TabPanel value="2">
-                  <Box>
+                  <Box height={'350px'}  width='100%'>
                     <DataGrid
                         sx={{ fontSize: "1.2rem" }}
                         rows={events.next}

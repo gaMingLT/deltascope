@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Grid } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Grid, LinearProgress } from "@mui/material";
 import { Typography } from "@mui/material";
 import React, { useState } from "react";
 
@@ -165,12 +165,9 @@ const DisplayImages = ({
                   ""
                 )}
               </Box>
-              <Box>
+              <Box bgcolor="white">
                 {displayLoading ? (
-                  <CircularProgress
-                    color="primary"
-                    size="md"
-                  />
+                  <LinearProgress color="secondary" />
                 ) : ("")
                 }
               </Box>

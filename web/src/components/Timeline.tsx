@@ -4,62 +4,63 @@ import { Timeline } from "vis-timeline";
 // import "vis-timeline/styles/vis-timeline-graph2d.css";
 
 
-const DisplayTimeline = () => {
+const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
   const [timeLineLoaded, setTimeLineLoaded] = useState<Boolean>(false)
 
   useEffect(() => { 
-    if (!timeLineLoaded) {
+    if (!timeLineLoaded && eventsData) {
       createTimeline()
+      setTimeLineLoaded(true)
     }
   })
 
   const createTimeline = () => {
-    console.log('Clicking - timeline!')
     const container = document.getElementById("visualization") as HTMLElement;
     container.innerHTML = "";
 
     const groups = [
       { content: "Base", id: "base", value: 1, className: "base" },
-      { content: "Next", id: "next", value: 2, className: "next" },
+      // { content: "Next", id: "next", value: 2, className: "next" },
       { content: "Delta", id: "delta", value: 3, className: "delta" },
     ]
 
-    // Create a DataSet (allows two way data-binding)
-    const items = [
-      {
-        id: 1, content: "Base - item 1", start: "Sat Feb 25 2023 16:27:26", group: "base",
-        className: "base"
-      },
-      { id: 2, content: "Base - item 2", start: "Sat Feb 25 2023 16:28:49", group: "base",
-      className: "base" },
-      { id: 3, content: "Base - item 3", start: "Sat Feb 25 2023 16:29:30", group: "base",
-      className: "base" },
+    const items: Array<any> = []
+    let idCounter = 0;
+    const events = eventsData["events"]
+    Object.keys(events).map((key: string) => {
 
-      {
-        id: 4, content: "Next - item 1", start: "Sat Feb 25 2023 16:27:26", group: "next",
-        className: "next"
-      },
-      { id: 5, content: "Next - item 2", start: "Sat Feb 25 2023 16:28:49", group: "next",
-      className: "next" },
-      { id: 6, content: "Next - item 3", start: "Sat Feb 25 2023 16:29:30", group: "next",
-      className: "next" },
+      if (key != "next") {
+        const eventsType = events[key]
 
-      {
-        id: 7, content: "Delta - item 1", start: "Sat Feb 25 2023 16:27:26", group: "delta",
-        className: "delta"
-      },
-      { id: 8, content: "Delta - item 2", start: "Sat Feb 25 2023 16:28:49", group: "delta",
-      className: "delta" },
-      { id: 9, content: "Delta - item 3", start: "Sat Feb 25 2023 16:29:30", group: "delta",
-      className: "delta" },
+        eventsType.forEach((element: any) => {
+          let itemToAdd: any = { id: idCounter, content: `${element[7]} \n ${element[2]}` ,start: element[0] }
+          
+          if (key == "base") {
+              itemToAdd.group = "base";
+              itemToAdd.className = "base";
+          }
 
-    ];
+          // if (key == "next") {
+          //   itemToAdd.group = "next";
+          //   itemToAdd.className = "next";
+          // }
+
+          if (key == "delta") {
+            itemToAdd.group = "delta";
+            itemToAdd.className = "delta";
+          }
+
+          items.push(itemToAdd);
+
+          idCounter++;
+        });        
+      }
+    })
 
     // Configuration for the Timeline
     const options = {
-      min: "Sat Feb 25 2023 16:25:00", // lower limit of visible range
-      max: "Sat Feb 25 2023 16:30:00",
-    };
+      // height: '300px'
+    }
 
     // Create a Timeline
     const timeline = new Timeline(container, items, groups ,options);

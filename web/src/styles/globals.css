@@ -14,3 +14,15 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.vis-item.base {
+  background-color: rgb(126, 222, 126);
+}
+
+.vis-item.next {
+  background-color: rgb(75, 75, 203);
+}
+
+.vis-item.delta {
+  background-color: rgb(208, 131, 144);
+}

@@ -1,17 +1,16 @@
-import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { Alert, Box, Button, Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import DisplayTimeline from "~/components/Timeline";
 import Upload from "~/components/Upload";
 import DisplayImages from "~/components/DisplayImages";
 import ImageActions from "~/components/ImageActions";
-import DisplayEvents from "~/components/DisplayEvents";
 import { useState } from "react";
 
 const Home: NextPage = () => {
   const [directoryName, setDirectoryName] = useState<string>("");
   const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
+  const [eventsParent, setEventsParent] = useState<any>();
 
   return (
     <>
@@ -36,7 +35,7 @@ const Home: NextPage = () => {
             // sx={{ textAlign: "center" }}
             // justifyContent="center"
           >
-            <DisplayTimeline />
+            <DisplayTimeline eventsData={eventsParent} />
           </Grid>
 
           <Grid item container spacing={2}>
@@ -46,7 +45,7 @@ const Home: NextPage = () => {
             />
 
             {/* Events */}
-            <ImageActions directory={directoryName} images={selectedImages} />
+            <ImageActions directory={directoryName} images={selectedImages} setEventsParent={setEventsParent} />
           </Grid>
 
         </Grid>

@@ -54,7 +54,7 @@ def create_main_logger():
 main_logger = create_main_logger()
 
 def delta_images_cli(images: list[str]):
-  main_logger.info('Main program')
+  main_logger.info('Initiating Delta images trough CLI')
   
   outPath = prepareFilesystem(images, out='./output')
   dbCon = database_con(outPath)
@@ -115,7 +115,7 @@ def delta_images_cli(images: list[str]):
 
 
 def delta_image_web(paths: list[str], images: list[str]):
-  main_logger.info('Main program')
+  main_logger.info('Initiating Delta images trough WEB')
   
   outPath = prepareFilesystem(paths, out='./output')
   dbCon = database_con(outPath)
@@ -157,6 +157,7 @@ def delta_image_web(paths: list[str], images: list[str]):
 
 
 def getEventsImages(tablesNames: list[str], directoryPath: str):
+  methods_logger.info('[DELTASCOPE] - Retrieving events from images')
   dbCon = database_con(path=directoryPath)
   newNames = []
   for name in tablesNames:
