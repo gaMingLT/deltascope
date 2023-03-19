@@ -148,7 +148,7 @@ const DisplayEvents = ({
                   >
                     <Tab label="Delta's" value="0" />
                     <Tab label="Base Image" value="1" />
-                    <Tab label="New Image" value="2" />
+                    <Tab label="Next Image" value="2" />
                   </TabList>
                 </Box>
 

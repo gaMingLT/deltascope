@@ -1,15 +1,25 @@
 import { Box, Grid, TextareaAutosize, Typography } from "@mui/material";
 import Textarea from '@mui/joy/Textarea';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const FileDisplay = ({ fileBlob }: { fileBlob: Blob }) => {
+const FileDisplay = ({ fileBlob }: { fileBlob: Blob | undefined }) => {
   const [fileContent, setFileContent] = useState<string | ArrayBuffer | null>(
     ""
   );
+  const [fileSet, setFileSet] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log('On effect!')
+    if (!fileSet && fileBlob) {
+      console.log('Loading content of file')
+      loadFile()
+      setFileSet(true)
+    }
+  })
 
   const loadFile = () => {
     const reader = new FileReader();
-    console.log("Load file");
+    console.log("Reading file");
 
     reader.addEventListener(
       "load",
@@ -35,9 +45,10 @@ const FileDisplay = ({ fileBlob }: { fileBlob: Blob }) => {
           </Box>
         </Grid>
         <Grid item>
-          <Box>
+          <Box padding={0.5} >
             <TextareaAutosize
-                minRows={5}
+                minRows={15}
+                style={{ width: 350 }}
                 onClick={loadFile}
                 value={fileContent?.toString()}
               />

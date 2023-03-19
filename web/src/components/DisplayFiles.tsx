@@ -11,6 +11,7 @@ const DisplayFiles = ({ directoryName }: {
   const [directoryPath, setDirectoryName] = useState<string>(directoryName)
   const [ErrorMessage, setDeltaError] = useState<string>("");
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
+  const [loadedFileContent, setLoadedFileContent] = useState<Blob>();
 
   const baseToFile = (base: any): any => {
     console.log('Base: ', atob(base));
@@ -46,7 +47,11 @@ const DisplayFiles = ({ directoryName }: {
       });
   }
 
-
+  const loadFile = (e: any) => {
+    const fileName = e.target.getAttribute("data-name");
+    const fileContentString = new Blob(baseToFile(files[fileName]))
+    setLoadedFileContent(fileContentString)
+  }
 
 
   return(
@@ -59,26 +64,28 @@ const DisplayFiles = ({ directoryName }: {
           </Box>
         </Grid>
         <Grid item container spacing="2" direction="column">
-          <Grid item>
-            <Box bgcolor="pink" px={0.5} py={0.5} >
-              Files Name 1
-            </Box>
-          </Grid>
-          <Grid item>
-            <Box bgcolor="pink" px={0.5} py={0.5}>
-              Files Name 2
-            </Box>
-          </Grid>
+          {
+            Object.keys(files).map((key: string, index: number) => {
+              return (
+                <Grid item key={index} > 
+                  <Box bgcolor="pink" px={0.5} py={0.5} onClick={loadFile} data-name={key} style={{ cursor: 'pointer' }} >
+                    {key}
+                  </Box>
+                </Grid>
+              )
+            })
+          }
         </Grid>
       </Grid>
       <Grid item container spacing={2}  xs={6} style={{ border: '2px solid white', borderRadius: '5px' }} >
-        {
+        {/* {
           Object.keys(files).map((key: string, index: number) => { 
             return (
               <FileDisplay key={index} fileBlob={new Blob(baseToFile(files[key]))} />
             )
           })
-        }
+        } */}
+        <FileDisplay fileBlob={loadedFileContent} />
       </Grid>
       <Grid item container spacing={2} direction="column">
         <Grid item>
