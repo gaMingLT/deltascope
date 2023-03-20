@@ -2,6 +2,11 @@ from cli.methods import *
 from cli.db import * 
 from cli.loger import CustomFormatter
 
+from multiprocessing import Pool
+from functools import partial
+import time
+
+
 # from methods import * 
 # from db import * 
 # from loger import CustomFormatter
@@ -114,37 +119,60 @@ def delta_images_cli(images: list[str]):
   return outPath
 
 
+def delta_testing(outPath, iterable: str):
+  print('Iterable: ', iterable)
+  print('Outpath: ' , outPath)
+  path = iterable
+  
+  dbCon = database_con(outPath)
+  
+  imageInfo(path=path)
+  bodyFilePath = executeFls(path=path, out=outPath)
+  
+  name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
+  # tablesNames.append(name)
+  
+  createImageFilesTable(name=name, con=dbCon)
+  fileData = parseBodyFile(path=bodyFilePath, out=outPath)
+  inputValuesImageFilesTable(name=name, values=fileData, con=dbCon)
+  
+  # Timeline creation
+  createImageTimelineTable(name,con=dbCon)
+
+  # Create timeline files
+  createMacTimeLineFile(name=name, out=outPath)
+  
+  # Parse timelines file
+  timelineData = parseMacTimeLineFile(name=name, out=outPath)
+  
+  # Add data to database file
+  inputValuesImageTimelineTable(name=name, values=timelineData, con=dbCon)
+  
+  dbCon.close()
+  
+  return name
+  
+  
 def delta_image_web(paths: list[str], images: list[str]):
   main_logger.info('Initiating Delta images trough WEB')
+  start_time = time.time()
   
   outPath = prepareFilesystem(paths, out='./output')
-  dbCon = database_con(outPath)
+  # dbCon = database_con(outPath)
   tablesNames = []
   
-  for path in paths:
-    imageInfo(path=path)
-    bodyFilePath = executeFls(path=path, out=outPath)
-    
-    name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
-    tablesNames.append(name)
-    
-    createImageFilesTable(name=name, con=dbCon)
-    fileData = parseBodyFile(path=bodyFilePath, out=outPath)
-    inputValuesImageFilesTable(name=name, values=fileData, con=dbCon)
-    
-    # Timeline creation
-    createImageTimelineTable(name,con=dbCon)
   
-    # Create timeline files
-    createMacTimeLineFile(name=name, out=outPath)
-    
-    # Parse timelines file
-    timelineData = parseMacTimeLineFile(name=name, out=outPath)
-    
-    # Add data to database file
-    inputValuesImageTimelineTable(name=name, values=timelineData, con=dbCon)
+  with Pool(2) as p:
+    res = p.map(partial(delta_testing, outPath), paths)
+    print('Result: ', res)
+  
+  tablesNames = res
+  print('Finished preprocessing images')
+
+  print('Execution time', time.time() - start_time, ' Seconds')
 
   # Image Differences
+  dbCon = database_con(outPath)
   dataImages = []
   for tableName in tablesNames:
     fileData = getImageFilesValues(name=tableName, con=dbCon)
@@ -152,6 +180,9 @@ def delta_image_web(paths: list[str], images: list[str]):
   
   fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
   retrieveFilesFromImages(deltas=fileDelta, out=outPath)
+  
+  dbCon.close()
+  
   
   return { 'images': images, 'directoryName': outPath }
 
@@ -170,7 +201,3 @@ def getEventsImages(tablesNames: list[str], directoryPath: str):
   events = { 'delta': deltaEvents, 'base': baseEvents, 'next': nextEvents }
   
   return events
-
-
-def getDifferentFiles(tablesNames: list[str], directoryPath: str):
-  pass
