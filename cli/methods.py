@@ -1,4 +1,4 @@
-import hashlib, datetime, logging
+import hashlib, datetime, logging, codecs
 from os import mkdir, path, system
 
 from cli.loger import CustomFormatter
@@ -63,7 +63,7 @@ def executeFls(path: str, out: str) -> str:
   methods_logger.info('[METHODS] - Retrieving files from image using FLS')
   
   bodyFilePath = "{0}/{1}.txt".format(out, path.split('/')[-1].split('.')[0])
-  cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/', path ,bodyFilePath)
+  cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/home/milan/', path ,bodyFilePath)
   res = system(cmd)
   
   if res == 0:
@@ -75,7 +75,9 @@ def executeFls(path: str, out: str) -> str:
 def parseBodyFile(path: str, out: str) -> list:
   methods_logger.info('[METHODS] - Parsing body file')
   
-  f = open(path, "r")
+  # f = open(path, "r")
+  f = codecs.open(path, encoding='utf-8', errors='ignore')
+  
   data = []
   
   for line in f.readlines():

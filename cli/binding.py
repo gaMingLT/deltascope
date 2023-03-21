@@ -16,16 +16,20 @@ def place_uploaded_images(files: list[bytes], outPath: str):
 def list_uploaded_images():
   
   imageFileNames = []
-  for file in os.listdir('/home/milan/dev/python-tool/deltascope-1/cli/images/'):
+  # path = '/home/milan/dev/python-tool/deltascope-1/cli/images/'
+  path = '/mnt/img-store/scn-1/images'
+  for file in os.listdir(path):
       imageFileNames.append(file)
 
   return  imageFileNames
 
 
 def initiate_delta_images(images: list[str]) -> str:
+    # path = '/home/milan/dev/python-tool/deltascope-1/cli/images/'
+  path = '/mnt/img-store/scn-1/images/'
   paths = []
   for image in images:
-    paths.append("/home/milan/dev/python-tool/deltascope-1/cli/images/{0}".format(image))
+    paths.append("{0}{1}".format(path,image))
   
   res = delta_image_web(paths, images)
   
