@@ -88,14 +88,14 @@ def delta_images_cli(images: list[str]):
     # Add data to database file
     inputValuesImageTimelineTable(name=name, values=timelineData, con=dbCon)
 
-  dataImages = []
+  # dataImages = []
   
-  for tableName in tablesNames:
-    fileData = getImageFilesValues(name=tableName, con=dbCon)
-    dataImages.append((tableName,fileData))
+  # for tableName in tablesNames:
+  #   fileData = getImageFilesValues(name=tableName, con=dbCon)
+  #   dataImages.append((tableName,fileData))
   
-  fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
-  retrieveFilesFromImages(deltas=fileDelta, out=outPath)
+  # fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
+  # retrieveFilesFromImages(deltas=fileDelta, out=outPath)
   
   
   events = { 'base': [], 'next': [], 'delta': [] }
@@ -142,6 +142,9 @@ def delta_testing(outPath, iterable: str):
   # Create timeline files
   createMacTimeLineFile(name=name, out=outPath)
   
+  # Filtering mac timeline file:
+  filterMacTimeline(name=name, out=outPath)
+  
   # Parse timelines file
   timelineData = parseMacTimeLineFile(name=name, out=outPath)
   
@@ -171,6 +174,8 @@ def delta_image_web(paths: list[str], images: list[str]):
 
   print('Execution time', time.time() - start_time, ' Seconds')
 
+
+
   # Image Differences
   dbCon = database_con(outPath)
   dataImages = []
@@ -194,9 +199,15 @@ def getEventsImages(tablesNames: list[str], directoryPath: str):
   for name in tablesNames:
     newNames.append(name.replace('.img','').replace('-','_'))
   
-  baseEvents =  getImageEventsValues(newNames[0],dbCon)
-  nextEvents = getImageEventsValues(newNames[1], dbCon)
-  deltaEvents = getImageEventsDelta(newNames, dbCon)
+  # baseEvents =  getImageEventsValues(newNames[0],dbCon)
+  # nextEvents = getImageEventsValues(newNames[1], dbCon)
+  # deltaEvents = getImageEventsDelta(newNames, dbCon)
+  
+  print('Names= ', newNames)
+  
+  baseEvents = getImageEventsValuesYear(newNames[0], 2023, dbCon)
+  nextEvents = getImageEventsValuesYear(newNames[1], 2023, dbCon)
+  deltaEvents = getImageEventsDeltaYear(newNames, 2023, dbCon)
   
   events = { 'delta': deltaEvents, 'base': baseEvents, 'next': nextEvents }
   

@@ -63,7 +63,7 @@ def executeFls(path: str, out: str) -> str:
   methods_logger.info('[METHODS] - Retrieving files from image using FLS')
   
   bodyFilePath = "{0}/{1}.txt".format(out, path.split('/')[-1].split('.')[0])
-  cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/home/milan/', path ,bodyFilePath)
+  cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/', path ,bodyFilePath)
   res = system(cmd)
   
   if res == 0:
@@ -79,14 +79,54 @@ def parseBodyFile(path: str, out: str) -> list:
   f = codecs.open(path, encoding='utf-8', errors='ignore')
   
   data = []
-  
+  # counter = 0
   for line in f.readlines():
+    # print('Counter: ', counter, line)
     # MD5,name,inode,mode_as_string,UID,GID,size,atime,mtime,ctime,crtime
     md5,name,inode,mode_as_string,uid,gid,size,atime,mtime,ctime,crtime = line.split('|')
     data.append((md5,name,inode,mode_as_string,uid,gid,size,atime,mtime,ctime,crtime))
+    # counter = counter + 1
   
   return data
 
+def createMacTimeLineFile(name, out: str):
+  methods_logger.info('[METHODS] - Creating MAC Timeline from FLS Body file')
+  
+  if not path.exists('{0}/{1}'.format(out,'timelines')):
+    mkdir('{0}/{1}'.format(out,'timelines'))
+
+  cmd = "mactime -b {1}/{0}.txt > {1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
+  res = system(cmd)
+  
+  if res == 0:
+    methods_logger.info('[METHODS] - Completed creating mactime line file for {0}'.format(name))
+
+
+def parseMacTimeLineFile(name, out: str):
+  methods_logger.info('[METHODS] - Parsing MAC Timeline file')
+  path = "{1}/{2}/tl.{0}-filtered.txt".format(name.replace('_','-'), out, 'timelines')
+  
+  f = codecs.open(path, encoding='utf-8', errors='ignore')
+  
+  data = []
+  for line in f.readlines():
+    date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:33], line[33:38], line[39:52], line[52:54], line[61:63], line[69:74], line[74:]
+    values = (date.strip(), size.strip(), activity.strip()  ,perm.strip(), uid.strip(), guid.strip(), inode.strip(), file_name.strip())
+    data.append(values)
+
+  return data
+
+
+def filterMacTimeline(name, out: str):
+  methods_logger.info('[METHODS] - Filtering MAC Timeline file')
+  
+  path = "{1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
+  
+  cmd = "grep -E '/etc/*' {0} | grep -v '/usr/share' > {2}/{3}/tl.{1}-filtered.txt".format(path, name.replace('_','-'), out, 'timelines')
+  res = system(cmd)
+  
+  if res == 0:
+    methods_logger.info('[METHODS] - Filtering MAC Timeline file complete: {0}'.format(name))
 
 def compareHashAndPath(data, con):
   methods_logger.info('[METHODS] - Comparing hash and path')
@@ -144,72 +184,9 @@ def compareHashAndPath(data, con):
       # print('New', nextRow)
       # TODO: Moved files are shown as new here - hash als changes :(
       differences['new'].append(nextRow)
-      
-
-  # for baseRow in baseImage:
-  #   # rows = hashAndPath[1]
-  #   # Same: nothing changed beteween 2 delta's
-  #   # Deleted: not present in new image
-  #   # Modified: something was modified - but location is the same
-  #   # Moved: location of file changed - nothing else
-  #   baseHash = baseRow[0]
-  #   basePath = baseRow[1]
-    
-  #   for nextRow in nextImage:
-  #     nextHash = nextRow[0]
-  #     nextPath = nextRow[1]
-      
-  #     if baseHash == nextHash:
-  #       if basePath == nextPath:
-  #         differences['same'].append(nextRow)
-  #       # else:
-  #       #   # not correct
-  #       #   differences['moved'] = nextRow
-  #     elif basePath == nextPath:
-  #       differences['modified'].append(nextRow)
-  #     else:
-  #       pass
-  #     # print('Base-row: ', baseRow, 'Next-row: ', nextRow)
-
-  # for nextRow in nextImage:   
-  #   nextPath = nextRow[1]
-    
-  #   if 'deleted' in nextPath:
-  #     differences['deleted'].append(nextRow)
-    
-  #   if nextRow not in baseImage and 'deleted' not in nextPath:
-  #     differences['new'].append(nextRow)
-
+  
   deltaImage['differences'] = differences
   return deltaImage
-
-
-def createMacTimeLineFile(name, out: str):
-  methods_logger.info('[METHODS] - Creating MAC Timeline from FLS Body file')
-  
-  if not path.exists('{0}/{1}'.format(out,'timelines')):
-    mkdir('{0}/{1}'.format(out,'timelines'))
-
-  cmd = "mactime -b {1}/{0}.txt > {1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
-  res = system(cmd)
-  
-  if res == 0:
-    methods_logger.info('[METHODS] - Completed creating mactime line file for {0}'.format(name))
-
-
-def parseMacTimeLineFile(name, out: str):
-  methods_logger.info('[METHODS] - Parsing MAC Timeline file')
-  path = "{1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
-  
-  f = open(path, "r")
-  data = []
-  
-  for line in f.readlines():
-    date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:33], line[33:38], line[39:52], line[52:54], line[61:63], line[69:74], line[74:]
-    values = (date.strip(), size.strip(), activity.strip()  ,perm.strip(), uid.strip(), guid.strip(), inode.strip(), file_name.strip())
-    data.append(values)
-
-  return data
 
 
 def retrieveFilesFromImages(deltas, out: str):

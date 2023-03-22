@@ -33,7 +33,7 @@ const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
         const eventsType = events[key]
 
         eventsType.forEach((element: any) => {
-          let itemToAdd: any = { id: idCounter, content: `${element[7]} \n ${element[2]}` ,start: element[0] }
+          let itemToAdd: any = { id: idCounter, content: `${element[7]}` ,start: element[0] }
           
           if (key == "base") {
               itemToAdd.group = "base";

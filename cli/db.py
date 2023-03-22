@@ -47,7 +47,7 @@ def inputValuesImageFilesTable(name: str, values, con):
 def getImageFilesValues(name: str, con):
   cur = con.cursor()
   db_logger.debug('Retrieving values from database: {0}'.format(name))
-  res = cur.execute("SELECT * FROM {0}_files".format(name))
+  res = cur.execute("SELECT * FROM {0}_files LIMIT 100".format(name))
   return res.fetchall()
 
 def createImageTimelineTable(name: str, con):
@@ -68,8 +68,20 @@ def getImageEventsValues(name: str, con):
   res = cur.execute("SELECT * FROM {0}_events".format(name))
   return res.fetchall()
 
+def getImageEventsValuesYear(name: str, year: int ,con):
+  cur = con.cursor()
+  db_logger.debug("Retrieving values from database: {0}_events".format(name))
+  res = cur.execute("SELECT * FROM {0}_events where date like '%{1}%'".format(name, year))
+  return res.fetchall()
+
 def getImageEventsDelta(names: str, con):
   cur = con.cursor()
   db_logger.debug('Retrieving delta values from database: {0}'.format(names))
-  res = cur.execute("SELECT * FROM {0}_events WHERE date NOT IN (SELECT date FROM {1}_events)".format(names[1], names[0]))
+  res = cur.execute("SELECT * FROM {0}_events WHERE date NOT IN (SELECT date FROM {1}_events) LIMIT 100".format(names[1], names[0]))
+  return res.fetchall()
+
+def getImageEventsDeltaYear(names: str, year: int ,con):
+  cur = con.cursor()
+  db_logger.debug('Retrieving delta values from database: {0}'.format(names))
+  res = cur.execute("SELECT * FROM {0}_events WHERE date NOT IN (SELECT date FROM {1}_events)  and date like '%{2}%' ".format(names[1], names[0], year))
   return res.fetchall()

@@ -26,7 +26,7 @@ const columns: GridColDef[] = [
   { field: "uid", headerName: "User ID", width: 100 },
   { field: "guid", headerName: "Group ID", width: 100 },
   { field: "inode", headerName: "Inode", width: 75 },
-  { field: "name", headerName: "Name", width: 150 },
+  { field: "name", headerName: "Name", width: 250 },
 ];
 
 const DisplayEvents = ({
