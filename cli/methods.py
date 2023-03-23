@@ -110,9 +110,12 @@ def parseMacTimeLineFile(name, out: str):
   
   data = []
   for line in f.readlines():
-    date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:33], line[33:38], line[39:52], line[52:54], line[61:63], line[69:74], line[74:]
+    # TODO: Improve this!
+    date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:34], line[34:39], line[39:52], line[52:54], line[61:63], line[71:78], line[78:]
     values = (date.strip(), size.strip(), activity.strip()  ,perm.strip(), uid.strip(), guid.strip(), inode.strip(), file_name.strip())
     data.append(values)
+    
+  print('Value mac timeline: ', data[0])
 
   return data
 
@@ -131,8 +134,6 @@ def filterMacTimeline(name, out: str):
 def compareHashAndPath(data, con):
   methods_logger.info('[METHODS] - Comparing hash and path')
   hashAndPathImages = []
-  
-  # print('Compare: ', data)
   
   for img in data:
     hashPathMode = []
@@ -194,6 +195,8 @@ def retrieveFilesFromImages(deltas, out: str):
   modified = deltas['differences']['modified']
   modifiedFilePaths = []
   
+  print('Modified: ', modified)
+  
   for mod in modified:
     fileOrDir = mod[3].split('/')[0]
     
@@ -215,8 +218,6 @@ def retrieveFilesFromImages(deltas, out: str):
   
   print(modifiedFilePaths)
   
-  # { 'file-name': [path-1,path-2] }
-  
   differentPathNames = {}
   
   for name in imageNames:
@@ -228,7 +229,10 @@ def retrieveFilesFromImages(deltas, out: str):
       else:
         differentPathNames[fileName] = ["{0}-{2}-{1}.txt".format(name.replace('_','-'), mod[2] ,pathName)]
       
-      cmd = "icat /home/milan/dev/python-tool/deltascope-1/cli/images/{0}.img {1} > {2}/icat/{0}-{3}-{1}.txt".format(name.replace('_','-'), mod[2], out, pathName)
+      # cmd = "icat /home/milan/dev/python-tool/deltascope-1/cli/images/{0}.img {1} > {2}/icat/{0}-{3}-{1}.txt".format(name.replace('_','-'), mod[2], out, pathName)
+      srcPath = "/mnt/img-store/scn-1/images"
+      cmd = "icat {4}/{0}.img {1} > {2}/icat/{0}-{3}-{1}.txt".format(name.replace('_','-'), mod[2], out, pathName, srcPath)
+      
       
       res = system(cmd)
       

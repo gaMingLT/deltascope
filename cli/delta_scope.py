@@ -175,13 +175,13 @@ def delta_image_web(paths: list[str], images: list[str]):
   print('Execution time', time.time() - start_time, ' Seconds')
 
 
-
   # Image Differences
   dbCon = database_con(outPath)
   dataImages = []
   for tableName in tablesNames:
-    fileData = getImageFilesValues(name=tableName, con=dbCon)
-    dataImages.append((tableName,fileData))
+    # fileData = getImageFilesValues(name=tableName, con=dbCon)
+    fileData = getImageFilesValuesPath(name=tableName, path='/etc', con=dbCon)
+    dataImages.append((tableName, fileData))
   
   fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
   retrieveFilesFromImages(deltas=fileDelta, out=outPath)
@@ -202,8 +202,6 @@ def getEventsImages(tablesNames: list[str], directoryPath: str):
   # baseEvents =  getImageEventsValues(newNames[0],dbCon)
   # nextEvents = getImageEventsValues(newNames[1], dbCon)
   # deltaEvents = getImageEventsDelta(newNames, dbCon)
-  
-  print('Names= ', newNames)
   
   baseEvents = getImageEventsValuesYear(newNames[0], 2023, dbCon)
   nextEvents = getImageEventsValuesYear(newNames[1], 2023, dbCon)

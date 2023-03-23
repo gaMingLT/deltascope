@@ -1,4 +1,4 @@
-import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridRowsProp, GridColDef, useGridApiContext, GridEventListener, useGridApiEventHandler } from "@mui/x-data-grid";
 import {
   Alert,
   AppBar,
@@ -26,7 +26,7 @@ const columns: GridColDef[] = [
   { field: "uid", headerName: "User ID", width: 100 },
   { field: "guid", headerName: "Group ID", width: 100 },
   { field: "inode", headerName: "Inode", width: 75 },
-  { field: "name", headerName: "Name", width: 250 },
+  { field: "name", headerName: "Name", width: 500 },
 ];
 
 const DisplayEvents = ({
@@ -47,6 +47,8 @@ const DisplayEvents = ({
   // const [eventsSet, setEventsSet] = useState<boolean>(false);
   const [ErrorMessage, setDeltaError] = useState<string>("");
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
+  const [displaySelectedRow, setDisplaySelectedRow] = useState("");
+  // const apiRef = useGridApiContext();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -57,6 +59,13 @@ const DisplayEvents = ({
   //     eventsToTable(events)
   //   }
   // })
+
+  const handleRowClick: GridEventListener<'rowClick'> = (params) => {
+    console.log('Params: ', params)
+    setDisplaySelectedRow(`Path:  "${params.row.name}"`);
+  };
+
+  // useGridApiEventHandler(apiRef, 'rowClick', handleRowClick);
 
   const eventsToTable = (events: any) => {
     console.log('Events to table!', events)
@@ -136,6 +145,8 @@ const DisplayEvents = ({
       });
   };
 
+
+
   return (
     <>
       <Grid container spacing="2">
@@ -155,6 +166,7 @@ const DisplayEvents = ({
                 <TabPanel value="0">
                   <Box height={'350px'} width='100%'>
                     <DataGrid
+                      onRowClick={handleRowClick}
                       sx={{ fontSize: "1.2rem" }}
                       rows={events.delta}
                       columns={columns}
@@ -165,6 +177,7 @@ const DisplayEvents = ({
                 <TabPanel value="1">
                   <Box height={'350px'}  width='100%'>
                     <DataGrid
+                        onRowClick={handleRowClick}
                         sx={{ fontSize: "1.2rem" }}
                         rows={events.base}
                         columns={columns}
@@ -175,6 +188,7 @@ const DisplayEvents = ({
                 <TabPanel value="2">
                   <Box height={'350px'}  width='100%'>
                     <DataGrid
+                        onRowClick={handleRowClick}
                         sx={{ fontSize: "1.2rem" }}
                         rows={events.next}
                         columns={columns}
@@ -183,6 +197,13 @@ const DisplayEvents = ({
                 </TabPanel>
 
               </TabContext>
+        </Grid>
+        <Grid>
+          <Grid item>
+              <Box>
+                <p>{displaySelectedRow}</p>
+              </Box>
+          </Grid>
         </Grid>
         <Grid item container spacing="2" direction="column">
           <Grid item>

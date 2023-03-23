@@ -50,6 +50,12 @@ def getImageFilesValues(name: str, con):
   res = cur.execute("SELECT * FROM {0}_files LIMIT 100".format(name))
   return res.fetchall()
 
+def getImageFilesValuesPath(name: str, path: str, con):
+  cur = con.cursor()
+  db_logger.debug('Retrieving values from database: {0}'.format(name))
+  res = cur.execute("SELECT * FROM {0}_files where name like '{1}%' ORDER BY mtime DESC".format(name, path))
+  return res.fetchall()
+
 def createImageTimelineTable(name: str, con):
   db_logger.debug('Creating table: {0}_events'.format(name))
   cur = con.cursor()
