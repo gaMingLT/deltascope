@@ -1,18 +1,15 @@
-import { DataGrid, GridRowsProp, GridColDef, useGridApiContext, GridEventListener, useGridApiEventHandler } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
 import {
   Alert,
-  AppBar,
   Box,
   Button,
   Grid,
   Tab,
-  Tabs,
-  Typography,
 } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const columns: GridColDef[] = [
   {
@@ -20,12 +17,15 @@ const columns: GridColDef[] = [
     headerName: "Date",
     width: 250,
   },
-  { field: "size", headerName: "Size", width: 100 },
-  { field: "activity", headerName: "Acitvity", width: 125 },
-  { field: "permissions", headerName: "Permissions", width: 125 },
+  { field: "size", headerName: "Size", width: 65 },
+  { field: "activity", headerName: "Acitvity", width: 150 },
+  { field: "fileType", headerName: "File Type", width: 150 },
+  { field: "ownerPerm", headerName: "Owner", width: 75 },
+  { field: "groupPerm", headerName: "Group", width:  75 },
+  { field: "otherPerm", headerName: "Other", width: 75 },
   { field: "uid", headerName: "User ID", width: 100 },
   { field: "guid", headerName: "Group ID", width: 100 },
-  { field: "inode", headerName: "Inode", width: 75 },
+  { field: "inode", headerName: "Inode", width: 100 },
   { field: "name", headerName: "Name", width: 500 },
 ];
 
@@ -48,27 +48,49 @@ const DisplayEvents = ({
   const [ErrorMessage, setDeltaError] = useState<string>("");
   const [displayError, setDisplayErrorMessage] = useState<boolean>(false);
   const [displaySelectedRow, setDisplaySelectedRow] = useState("");
-  // const apiRef = useGridApiContext();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  // useEffect(() => {
-  //   if(eventsSet) {
-  //     eventsToTable(events)
-  //   }
-  // })
 
   const handleRowClick: GridEventListener<'rowClick'> = (params) => {
     console.log('Params: ', params)
-    setDisplaySelectedRow(`Path:  "${params.row.name}"`);
+    setDisplaySelectedRow(params.row.name);
   };
 
-  // useGridApiEventHandler(apiRef, 'rowClick', handleRowClick);
+  const getActivity = (mActivity: string, aActivity: string, cActivity: string, bActivity: string) => {
+    if (mActivity != ".") {
+      return "Modified"
+    }
+    else if (aActivity != ".") {
+      return "Accessed"
+    }
+    else if (cActivity != ".") {
+      return "Changed"
+    }
+    else if (bActivity != ".") {
+      return "Created"
+    }
+  }
+
+  const getFileType = (type: string) => {
+    switch(type) {
+      case "-":
+        return "Unknown"
+      case "r":
+        return "Regular File"
+      case "d":
+        return "Directory"
+      case "l":
+        return "Link"
+      default:
+        return type
+    }
+  }
 
   const eventsToTable = (events: any) => {
-    console.log('Events to table!', events)
+    console.log('Events to table!')
     const tempEventsData = {
       delta: new Array(),
       base: new Array(),
@@ -84,18 +106,19 @@ const DisplayEvents = ({
         eventsType.forEach((element: any) => {
           
           let itemToAdd: any = {
-            id: idCounter, 
-            date: element[0] ? element[0] : previousDate,
-            size: element[1],
-            activity: element[2],
-            permissions: element[3],
-            uid: element[4],
-            guid: element[5],
-            inode: element[6],
-            name: element[7]
+            id: idCounter,
+            date: element.Date,
+            size: element.Size,
+            activity: getActivity(element.mActivity, element.aActivity, element.cActivit, element.bActivity),
+            fileType: getFileType(element.FileType[0]),
+            ownerPerm: element.OwnerPerm,
+            groupPerm: element.GroupPerm,
+            otherPerm: element.OtherPerm,
+            uid: element.UUID,
+            guid: element.GUID,
+            inode: element.Inode,
+            name: element.Path
           }
-
-          element[0] ? previousDate = element[0] : ""
 
           switch(key) {
             case "delta":
@@ -117,11 +140,7 @@ const DisplayEvents = ({
         // setEventsSet(true)
     })
 
-    console.log("Events data - mapped: ", tempEventsData)
     setEvents(tempEventsData)
-
-    console.log("Events: ", events.delta)
-    
   }
 
   const getEvents = () => {
@@ -136,9 +155,8 @@ const DisplayEvents = ({
     })
       .then(async (e) => {
         let data = await e.json();
-        console.log('Events data: ', data)
         setEventsParent(data)
-        // eventsToTable(data.events);
+        eventsToTable(data.events);
       })
       .catch((e) => {
         setDisplayErrorMessage(true);
@@ -150,7 +168,7 @@ const DisplayEvents = ({
 
   return (
     <>
-      <Grid container spacing="2">
+      <Grid container spacing="2" direction="column">
         <Grid item>
         <TabContext value={value.toString()}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -199,11 +217,13 @@ const DisplayEvents = ({
 
               </TabContext>
         </Grid>
-        <Grid>
+        <Grid item>
           <Grid item>
-              <Box>
-                <p>{displaySelectedRow}</p>
-              </Box>
+            { displaySelectedRow ? 
+                <Box style={{ padding: '0.5rem', fontSize: '1.25rem' }} >
+                  <p><strong>Path: </strong> {displaySelectedRow}</p>
+                </Box> : ''
+            }
           </Grid>
         </Grid>
         <Grid item container spacing="2" direction="column">

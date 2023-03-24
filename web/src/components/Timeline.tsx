@@ -3,9 +3,16 @@ import { useEffect, useState } from "react";
 import { Timeline } from "vis-timeline";
 // import "vis-timeline/styles/vis-timeline-graph2d.css";
 
-
 const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
   const [timeLineLoaded, setTimeLineLoaded] = useState<Boolean>(false)
+  const [selectedEventsTimeline, setSelectedEventsTimeline] = useState<{ modified: boolean, accessed: boolean, changed: boolean, created: boolean }>(
+    {
+      "modified": true,
+      "accessed": true,
+      "changed": true,
+      "created": true
+    }
+  );
 
   useEffect(() => { 
     if (!timeLineLoaded && eventsData) {
@@ -14,79 +21,149 @@ const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
     }
   })
 
+  const changeEventsShown = (type: string) => {
+    switch(type) {
+      case "modified":
+        selectedEventsTimeline.modified = !selectedEventsTimeline.modified;
+        break;
+      case "accessed":
+        selectedEventsTimeline.accessed = !selectedEventsTimeline.accessed;
+        break;
+      case "changed":
+        selectedEventsTimeline.changed = !selectedEventsTimeline.changed;
+        break;
+      case "created":
+        selectedEventsTimeline.created = !selectedEventsTimeline.created;
+        break;
+    }
+    createTimeline();
+  }
+
+  const addToTimeline = (element: string) => {
+    let res = false
+    Object.keys(selectedEventsTimeline).map((key: string) => {
+      const temp= selectedEventsTimeline as any;
+      if (element == key) {
+        res = temp[key]
+      } 
+    })
+    return res;
+  }
+
   const createTimeline = () => {
     const container = document.getElementById("visualization") as HTMLElement;
     container.innerHTML = "";
 
     const groups = [
-      // { content: "Base", id: "base", value: 1, className: "base" },
-      // { content: "Next", id: "next", value: 2, className: "next" },
       { content: "Delta", id: "delta", value: 1, className: "delta" },
     ]
 
     const items: Array<any> = []
     let idCounter = 0;
     const events = eventsData["events"]
-    console.log('Events received: ', events)
     const deltaEvents = events.delta
     deltaEvents.map((element: any) => {
-      let itemToAdd: any = { id: idCounter, content: element.Path ,start: element.Date, group: "delta" }
+      const path = element.Path
+      const name = path.split('/')[-1]
+      let fileType;
 
-      items.push(itemToAdd);
+      switch(element.FileType[0]) {
+        case "-":
+          fileType = "Unknown"
+          break;
+        case "r":
+          fileType = "Regular File"
+          break;
+        case "d":
+          fileType = "Directory"
+          break;
+        case "l":
+          fileType = "Link"
+          break;
+        default:
+          fileType = element.FileType[0]
+          break;
+      }
 
-      idCounter++;
+      const divContent = `      
+        <div style={{ width: '25px', height: '25px', padding: '0.5rem', wordWrap: 'break-word' }} >
+          <p>Path: ${path}</p>
+          <p>Type: ${fileType}</p>
+         </div>`
+
+      let itemToAdd: any = { id: idCounter, content: divContent , start: element.Date }
+
+      if (element.mActivity != ".") {
+        itemToAdd.className = "modified"
+      }
+      else if (element.aActivity != ".") {
+        itemToAdd.className = "accessed"
+      }
+      else if (element.cActivity != ".") {
+        itemToAdd.className = "changed"
+      }
+      else if (element.bActivity != ".") {
+        itemToAdd.className = "created"
+      }
+
+      if (addToTimeline(itemToAdd.className)) {
+        items.push(itemToAdd);
+        idCounter++;
+      }
+
     })
-    // Object.keys(events).map((key: string) => {
-
-    //   if (key != "next") {
-    //     const eventsType = events[key]
-
-    //     eventsType.forEach((element: any) => {
-    //       let itemToAdd: any = { id: idCounter, content: `${element[7]}` ,start: element[0] }
-          
-    //       // if (key == "base") {
-    //       //     itemToAdd.group = "base";
-    //       //     itemToAdd.className = "base";
-    //       // }
-
-    //       // if (key == "next") {
-    //       //   itemToAdd.group = "next";
-    //       //   itemToAdd.className = "next";
-    //       // }
-
-    //       if (key == "delta") {
-    //         itemToAdd.group = "delta";
-    //         itemToAdd.className = "delta";
-    //       }
-
-    //       items.push(itemToAdd);
-
-    //       idCounter++;
-    //     });        
-    //   }
-    // })
 
     // Configuration for the Timeline
     const options = {
-      // height: '300px'
+      height: '450px',
+      stack: true,
+      horizontalScroll: true,
+      // verticalScroll: true, 
+      // zoomKey: 'ctrlKey'
     }
 
     // Create a Timeline
-    const timeline = new Timeline(container, items, groups ,options);
+    const timeline = new Timeline(container, items, options);
   }
 
 
   return (
     <>
-      <Grid container spacing={2} direction="column">
-        <Grid item>
+      <Grid container spacing={4} direction="column">
+        {/* <Grid item>
           <Box style={{ textAlign: 'center', width: '100%', margin: 'auto' }} >
             <h1>Pipeline</h1>
           </Box>
-        </Grid>
+        </Grid> */}
         <Grid item>
-          <Box id="visualization" style={{ border: '1px solid black', height: 'auto', margin: '1rem', padding: '1rem' }}>
+          <Box id="visualization" style={{ border: '1px solid black', height: '475px', margin: '1rem', padding: '0.5rem', backgroundColor: "white" }}>
           </Box>
+        </Grid>
+        <Grid item container spacing={2} justifyContent={"center"} p={1} width={"max-content"} margin={"auto"} /* style={{ backgroundColor: '#42a5f5' }} */ >
+            <Grid item>
+              <Box style={{ display: 'flex' ,justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '0.25rem', borderRadius: '5px', cursor: 'pointer'  }} onClick={() => changeEventsShown("modified")} >
+                <h3>Modified: </h3>
+                <div style={{ height: '2rem', width: '2rem', backgroundColor: 'rgb(31, 201, 53)', margin: '0.5rem' , borderRadius: '5px' }} ></div>
+              </Box>
+            </Grid>
+            <Grid item>
+            <Box style={{ display: 'flex' ,justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '0.25rem', borderRadius: '5px', cursor: 'pointer'  }} onClick={() => changeEventsShown("accessed")} >
+                <h3>Accessed: </h3>
+                <div style={{ height: '2rem', width: '2rem', backgroundColor: 'rgb(95, 91, 91)', margin: '0.5rem' ,borderRadius: '5px' }} ></div>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box style={{ display: 'flex' ,justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '0.25rem', borderRadius: '5px', cursor: 'pointer'  }} onClick={() => changeEventsShown("changed")} >
+                <h3>Changed: </h3>
+                <div style={{ height: '2rem', width: '2rem', backgroundColor: 'rgb(229, 108, 108);', margin: '0.5rem' ,borderRadius: '5px' }} ></div>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box style={{ display: 'flex' ,justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '0.25rem', borderRadius: '5px', cursor: 'pointer'  }} onClick={() => changeEventsShown("created")}  >
+                <h3>Created: </h3>
+                <div style={{ height: '2rem', width: '2rem', backgroundColor: 'aqua', margin: '0.5rem' ,borderRadius: '5px' }} ></div>
+              </Box>
+            </Grid>
         </Grid>
       </Grid>
     </>

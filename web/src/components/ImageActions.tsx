@@ -24,7 +24,7 @@ const ImageActions = ({
   return (
     <>
       <Grid item xs={8}>
-          <Box bgcolor="primary.light" textAlign="center" padding="1rem">
+          <Box /* bgcolor="primary.light" */ textAlign="center" padding="1rem">
             <Box textAlign="center">
               <h2>Events</h2>
             </Box>

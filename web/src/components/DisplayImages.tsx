@@ -81,7 +81,7 @@ const DisplayImages = ({
   return (
     <>
       <Grid item xs={4}>
-        <Box bgcolor="primary.light" padding="1rem">
+        <Box /* bgcolor="primary.light" */ padding="1rem">
           <Box textAlign="center">
             <h2>Images</h2>
           </Box>
@@ -167,7 +167,7 @@ const DisplayImages = ({
               </Box>
               <Box bgcolor="white">
                 {displayLoading ? (
-                  <LinearProgress color="secondary" />
+                  <LinearProgress color="primary" />
                 ) : ("")
                 }
               </Box>
@@ -175,137 +175,6 @@ const DisplayImages = ({
           </Grid>
         </Box>
       </Grid>
-
-      {/* <Grid
-        container
-        spacing={8}
-        direction={"column"}
-        xs={
-          12
-        }
-        zeroMinWidth
-      >
-
-        <Grid container spacing={2} direction="column" justifyContent="center" alignItems="center" sx={{ marginBottom: '1.5rem' }} >
-          <Typography
-            variant="h5"
-            sx={{ fontSize: "1.5rem", fontWeight: "bolder", textAlign: 'center' }}
-          >
-            Selected Images
-          </Typography>
-          <Grid
-            container
-            spacing={2}
-            item
-            xs={
-              6
-            }
-            direction="column"
-          >
-            {selectedImages.map((name, index) => (
-              <Box
-                key={index}
-                data-name={name}
-                onClick={addImageForComparison}
-                sx={{
-                  textAlign: "center",
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  margin: "1rem",
-                  padding: "0.75rem",
-                  color: "black",
-                  backgroundColor: "lightblue",
-                  cursor: "pointer",
-                  borderRadius: "5px",
-                }}
-              >
-                {name}
-              </Box>
-            ))}
-          </Grid>          
-        </Grid>
-
-
-
-        <Grid container spacing={4} direction="column" justifyContent="center" alignItems="center" zeroMinWidth>
-          <Typography
-            variant="h5"
-            sx={{ fontSize: "1.5rem", fontWeight: "bolder" }}
-          >
-            Available Images
-          </Typography>
-          <Grid container spacing={2} direction={"column"} xs={6} zeroMinWidth>
-            {availableImages.map((name, index) => (
-              <Box
-                key={index}
-                data-name={name}
-                onClick={addImageForComparison}
-                sx={{
-                  textAlign: "center",
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  color: "black",
-                  margin: "1rem",
-                  padding: "0.5rem",
-                  border: "2px solid black",
-                  borderRadius: "3px",
-                  cursor: "pointer",
-                }}
-              >
-                {name}
-              </Box>
-            ))}
-          </Grid>          
-        </Grid>
-
-
-        <Grid
-          container
-          spacing={2}
-          direction={"column"}
-          xs={4}
-          item
-          zeroMinWidth
-        >
-          <Button
-            variant="contained"
-            sx={{ marginTop: "1rem" }}
-            onClick={getAvailableImages}
-          >
-            Retrieve Images
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ marginTop: "1rem" }}
-            onClick={initiateDelta}
-          >
-            Initiate Delta
-          </Button>
-          {displayError ? (
-            <Alert sx={{ marginTop: "1rem" }} severity="error">
-              {ErrorMessage}
-            </Alert>
-          ) : (
-            ""
-          )}
-          {displayMessage ? (
-            <Alert sx={{ marginTop: "1rem" }} severity="success">
-              {message}
-            </Alert>
-          ) : (
-            ""
-          )}
-          {displayLoading ? (
-            <CircularProgress
-            color="primary"
-            size="md"
-          />
-          ) : ("")
-
-          }
-        </Grid>
-
-      </Grid> */}
     </>
   );
 };

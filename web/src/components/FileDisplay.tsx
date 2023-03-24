@@ -48,7 +48,7 @@ const FileDisplay = ({ fileBlob }: { fileBlob: Blob | undefined }) => {
           <Box padding={0.5} >
             <TextareaAutosize
                 minRows={15}
-                style={{ width: 600 }}
+                style={{ width: 800 }}
                 onClick={loadFile}
                 value={fileContent?.toString()}
               />
