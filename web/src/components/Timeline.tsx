@@ -19,43 +19,52 @@ const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
     container.innerHTML = "";
 
     const groups = [
-      { content: "Base", id: "base", value: 1, className: "base" },
+      // { content: "Base", id: "base", value: 1, className: "base" },
       // { content: "Next", id: "next", value: 2, className: "next" },
-      { content: "Delta", id: "delta", value: 3, className: "delta" },
+      { content: "Delta", id: "delta", value: 1, className: "delta" },
     ]
 
     const items: Array<any> = []
     let idCounter = 0;
     const events = eventsData["events"]
-    Object.keys(events).map((key: string) => {
+    console.log('Events received: ', events)
+    const deltaEvents = events.delta
+    deltaEvents.map((element: any) => {
+      let itemToAdd: any = { id: idCounter, content: element.Path ,start: element.Date, group: "delta" }
 
-      if (key != "next") {
-        const eventsType = events[key]
+      items.push(itemToAdd);
 
-        eventsType.forEach((element: any) => {
-          let itemToAdd: any = { id: idCounter, content: `${element[7]}` ,start: element[0] }
-          
-          if (key == "base") {
-              itemToAdd.group = "base";
-              itemToAdd.className = "base";
-          }
-
-          // if (key == "next") {
-          //   itemToAdd.group = "next";
-          //   itemToAdd.className = "next";
-          // }
-
-          if (key == "delta") {
-            itemToAdd.group = "delta";
-            itemToAdd.className = "delta";
-          }
-
-          items.push(itemToAdd);
-
-          idCounter++;
-        });        
-      }
+      idCounter++;
     })
+    // Object.keys(events).map((key: string) => {
+
+    //   if (key != "next") {
+    //     const eventsType = events[key]
+
+    //     eventsType.forEach((element: any) => {
+    //       let itemToAdd: any = { id: idCounter, content: `${element[7]}` ,start: element[0] }
+          
+    //       // if (key == "base") {
+    //       //     itemToAdd.group = "base";
+    //       //     itemToAdd.className = "base";
+    //       // }
+
+    //       // if (key == "next") {
+    //       //   itemToAdd.group = "next";
+    //       //   itemToAdd.className = "next";
+    //       // }
+
+    //       if (key == "delta") {
+    //         itemToAdd.group = "delta";
+    //         itemToAdd.className = "delta";
+    //       }
+
+    //       items.push(itemToAdd);
+
+    //       idCounter++;
+    //     });        
+    //   }
+    // })
 
     // Configuration for the Timeline
     const options = {

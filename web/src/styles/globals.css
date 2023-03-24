@@ -26,3 +26,19 @@ a {
 .vis-item.delta {
   background-color: rgb(208, 131, 144);
 }
+
+.vis-item.delete {
+  background-color: red;
+}
+
+.vis-item.create {
+  background-color: aqua;
+}
+
+.vis-item.modify {
+  background-color: blue;
+}
+
+.vis-item.acces {
+  background-color: gray;
+}

@@ -214,8 +214,6 @@ def get_events_images(tablesNames: list[str], directoryPath: str):
     else:
       pass
   
-  # baseEvents = get_events_image_values_year(name=baseImageTableName[1], year=2023, con=dbCon)
-  # nextEvents = get_events_image_values_year(name=nextImageTableName[1], year=2023, con=dbCon)
   baseEvents = json.loads(get_events_image_values_year(baseImageTableName[1], 2023, dbCon)[0][0])[:100]
   nextEvents = json.loads(get_events_image_values_year(nextImageTableName[1], 2023, dbCon)[0][0])[:100]
   deltaEvents = json.loads(get_events_image_delta_year(base=baseImageTableName[1], next=nextImageTableName[1], year=2023 ,con=dbCon)[0][0])
