@@ -136,8 +136,9 @@ const DisplayEvents = ({
     })
       .then(async (e) => {
         let data = await e.json();
-        setEventsParent(data)
-        eventsToTable(data.events);
+        console.log('Events data: ', data)
+        // setEventsParent(data)
+        // eventsToTable(data.events);
       })
       .catch((e) => {
         setDisplayErrorMessage(true);

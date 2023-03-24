@@ -1,6 +1,6 @@
 from fastapi import File
 import base64, os
-from cli.delta_scope import delta_image_web, getEventsImages
+from cli.delta_scope import delta_image_web, get_events_images
 
 
 # TODO: Scrap for now - while require streaming
@@ -37,7 +37,7 @@ def initiate_delta_images(images: list[str]) -> str:
 
 
 def get_events(imageNames: list[str], directoryPath: str):
-  events = getEventsImages(tablesNames=imageNames, directoryPath=directoryPath)
+  events = get_events_images(tablesNames=imageNames, directoryPath=directoryPath)
   
   return events
 

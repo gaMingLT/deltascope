@@ -1,4 +1,4 @@
-import hashlib, datetime, logging, codecs
+import hashlib, datetime, logging, codecs, datetime, dateparser
 from os import mkdir, path, system
 
 from cli.loger import CustomFormatter
@@ -79,13 +79,10 @@ def parseBodyFile(path: str, out: str) -> list:
   f = codecs.open(path, encoding='utf-8', errors='ignore')
   
   data = []
-  # counter = 0
   for line in f.readlines():
-    # print('Counter: ', counter, line)
     # MD5,name,inode,mode_as_string,UID,GID,size,atime,mtime,ctime,crtime
     md5,name,inode,mode_as_string,uid,gid,size,atime,mtime,ctime,crtime = line.split('|')
     data.append((md5,name,inode,mode_as_string,uid,gid,size,atime,mtime,ctime,crtime))
-    # counter = counter + 1
   
   return data
 
@@ -95,7 +92,7 @@ def createMacTimeLineFile(name, out: str):
   if not path.exists('{0}/{1}'.format(out,'timelines')):
     mkdir('{0}/{1}'.format(out,'timelines'))
 
-  cmd = "mactime -b {1}/{0}.txt > {1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
+  cmd = "mactime -b {1}/{0}.txt -d > {1}/{2}/tl.{0}.txt".format(name.replace('_','-'), out, 'timelines')
   res = system(cmd)
   
   if res == 0:
@@ -111,8 +108,23 @@ def parseMacTimeLineFile(name, out: str):
   data = []
   for line in f.readlines():
     # TODO: Improve this!
-    date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:34], line[34:39], line[39:52], line[52:54], line[61:63], line[71:78], line[78:]
-    values = (date.strip(), size.strip(), activity.strip()  ,perm.strip(), uid.strip(), guid.strip(), inode.strip(), file_name.strip())
+    tempLine = line.split(',')
+    date, size, activity, perm, uid, guid, inode, file_name = tempLine[0], tempLine[1], tempLine[2], tempLine[3], tempLine[4], tempLine[5], tempLine[6], tempLine[7]
+    # date, size, activity, perm, uid, guid, inode, file_name = line[:24], line[24:34], line[34:39], line[39:52], line[52:54], line[61:63], line[71:78], line[78:]
+    dateMili = dateparser.parse(date)
+    
+    fileType = perm[:3]
+    ownerPerm = perm[3:6]
+    groupPerm = perm[6:9]
+    otherPerm = perm[9:12]
+    # print(fileType, ownerPerm, groupPerm, otherPerm)
+    
+    mActivity, aActivity, cActivity, bActivity = activity[0], activity[1], activity[2], activity[3] 
+    # print(mActivity, aActivity, cActivity, bActivity)
+    
+    # values = (date.strip(), size.strip(), activity.strip()  , perm.strip(), uid.strip(), guid.strip(), inode.strip(), file_name.strip())
+    values = (dateMili, size, mActivity, aActivity, cActivity, bActivity  , fileType, ownerPerm, groupPerm, otherPerm , uid, guid, inode, file_name.replace('"', ''))
+    
     data.append(values)
     
   print('Value mac timeline: ', data[0])
@@ -252,21 +264,21 @@ def retrieveFilesFromImages(deltas, out: str):
 
         
 
-def getEventsImages(tablesNames, con):
-  methods_logger.info('[METHODS] - Retrieving events from images')
-  events = { 'base': [], 'next': [], 'delta': [] }
+# def get_events_images(tablesNames, con):
+#   methods_logger.info('[METHODS] - Retrieving events from images')
+#   events = { 'base': [], 'next': [], 'delta': [] }
   
-  for index, tableName in enumerate(tablesNames):
-    eventsData = getImageEventsValues(name=tableName, con=con)
-    if index == 0:
-      events['base'] = eventsData
-    else:
-      events['next'] = eventsData
+#   for index, tableName in enumerate(tablesNames):
+#     eventsData = getImageEventsValues(name=tableName, con=con)
+#     if index == 0:
+#       events['base'] = eventsData
+#     else:
+#       events['next'] = eventsData
   
-  eventsDelta = getImageEventsDelta(tablesNames, con=con)
-  print('Delta', eventsDelta)
+#   eventsDelta = get_events_image_delta(tablesNames, con=con)
+#   print('Delta', eventsDelta)
   
-  events['delta'] = eventsDelta
-  print('Events images: ', events)
+#   events['delta'] = eventsDelta
+#   print('Events images: ', events)
   
-  return events
+#   return events
