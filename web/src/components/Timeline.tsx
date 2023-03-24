@@ -155,7 +155,7 @@ const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
             <Grid item>
               <Box style={{ display: 'flex' ,justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '0.25rem', borderRadius: '5px', cursor: 'pointer'  }} onClick={() => changeEventsShown("changed")} >
                 <h3>Changed: </h3>
-                <div style={{ height: '2rem', width: '2rem', backgroundColor: 'rgb(229, 108, 108);', margin: '0.5rem' ,borderRadius: '5px' }} ></div>
+                <div style={{ height: '2rem', width: '2rem', backgroundColor: 'rgb(229, 108, 108)', margin: '0.5rem' ,borderRadius: '5px' }} ></div>
               </Box>
             </Grid>
             <Grid item>

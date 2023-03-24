@@ -202,15 +202,16 @@ def get_events_images(tablesNames: list[str], directoryPath: str):
   for name in tablesNames:
     newName = name.replace('.img','').replace('-','_')
     newNames.append(newName)
-    count = get_events_image_values_year_count(name=newName, con=dbCon)[0][0]
+    # count = get_events_image_values_year_count(name=newName, con=dbCon)[0][0]
+    date = get_events_image_values_neariest_date(name=newName, con=dbCon)[0][0]
     
     if len(baseImageTableName) == 0:
-      baseImageTableName = (count, newName)
-    elif count > baseImageTableName[0]:
-      nextImageTableName = (count, newName)
-    elif count < baseImageTableName[0]:
+      baseImageTableName = (date, newName)
+    elif date > baseImageTableName[0]:
+      nextImageTableName = (date, newName)
+    elif date < baseImageTableName[0]:
       nextImageTableName = baseImageTableName
-      baseImageTableName = (count, newName)
+      baseImageTableName = (date, newName)
     else:
       pass
   
