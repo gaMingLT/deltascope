@@ -166,35 +166,22 @@ def compareHashAndPath(data, con):
     nextHash = nextRow[0]
     nextPath = nextRow[1]
 
-    # nextPathFileDir = nextPath.split('/')[-1]
-    # lengthNextDir = len(nextPathFileDir)
-    # nextPathLocation = nextPath[:(len(nextPath)-lengthNextDir)]
-    # print(nextPathLocation, nextPathFileDir)
-
     if 'deleted' in nextPath:
       differences['swap'].append(nextRow)
 
     for baseRow in baseImage:
       baseHash = baseRow[0]
       basePath = baseRow[1]
-
-      # basePathFileDir = basePath.split('/')[-1]
-      # lengthBaseDir = len(basePathFileDir)
-      # basePathLocation = basePath[:(len(basePath)-lengthBaseDir)]
-      # print(basePathLocation, basePathFileDir)
     
       if baseHash == nextHash and basePath == nextPath:
-        # print('Same',baseRow, nextRow)
         differences['same'].append(nextRow)
   
       if baseHash != nextHash and basePath == nextPath:
-        # print('Modified',baseRow, nextRow)
         basePaths.append(basePath)
         differences['modified'].append(nextRow)
   
   
     if nextRow not in baseImage and 'deleted' not in nextPath and nextRow[1] not in basePaths:
-      # print('New', nextRow)
       # TODO: Moved files are shown as new here - hash als changes :(
       differences['new'].append(nextRow)
   
@@ -204,6 +191,7 @@ def compareHashAndPath(data, con):
 
 def retrieveFilesFromImages(deltas, out: str):
   methods_logger.info('[METHODS] - Retrieving ``modified`` files from image')
+  print('New files: ', deltas['differences']['new'])
   modified = deltas['differences']['modified']
   modifiedFilePaths = []
   
@@ -213,13 +201,10 @@ def retrieveFilesFromImages(deltas, out: str):
     fileOrDir = mod[3].split('/')[0]
     
     if fileOrDir == 'd':
-      # print('Directory: ', mod)
       pass
     elif fileOrDir == 'r':
       modifiedFilePaths.append(mod)
-      # print('File: ', mod)
     else:
-      # print('Else: ', mod)
       pass
   
   
@@ -227,8 +212,7 @@ def retrieveFilesFromImages(deltas, out: str):
   
   if not path.exists('{0}/{1}'.format(out,'icat')):
     mkdir('{0}/{1}'.format(out,'icat'))
-  
-  print(modifiedFilePaths)
+
   
   differentPathNames = {}
   
@@ -241,7 +225,6 @@ def retrieveFilesFromImages(deltas, out: str):
       else:
         differentPathNames[fileName] = ["{0}-{2}-{1}.txt".format(name.replace('_','-'), mod[2] ,pathName)]
       
-      # cmd = "icat /home/milan/dev/python-tool/deltascope-1/cli/images/{0}.img {1} > {2}/icat/{0}-{3}-{1}.txt".format(name.replace('_','-'), mod[2], out, pathName)
       srcPath = "/mnt/img-store/scn-1/images"
       cmd = "icat {4}/{0}.img {1} > {2}/icat/{0}-{3}-{1}.txt".format(name.replace('_','-'), mod[2], out, pathName, srcPath)
       
@@ -261,24 +244,3 @@ def retrieveFilesFromImages(deltas, out: str):
     res = system(cmd)
     if res == 0:
       methods_logger.debug('[METHODS] - Diffing of files succesfull!')
-
-        
-
-# def get_events_images(tablesNames, con):
-#   methods_logger.info('[METHODS] - Retrieving events from images')
-#   events = { 'base': [], 'next': [], 'delta': [] }
-  
-#   for index, tableName in enumerate(tablesNames):
-#     eventsData = getImageEventsValues(name=tableName, con=con)
-#     if index == 0:
-#       events['base'] = eventsData
-#     else:
-#       events['next'] = eventsData
-  
-#   eventsDelta = get_events_image_delta(tablesNames, con=con)
-#   print('Delta', eventsDelta)
-  
-#   events['delta'] = eventsDelta
-#   print('Events images: ', events)
-  
-#   return events
