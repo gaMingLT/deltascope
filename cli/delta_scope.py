@@ -3,7 +3,13 @@ from cli.db.conn import database_con
 from cli.db.tables import create_timeline_image_table_2, create_files_table
 from cli.db.events import input_values_events_2, get_events_image_values_neariest_date, get_events_image_values_neariest_date
 from cli.db.files import input_values_files, get_files_values_path
-from cli.db.delta import get_events_deltas
+from cli.db.delta import get_events_json, get_events_delta
+
+from cli.methods.utils import image_info, prepare_filesystem
+from cli.methods.fls import execute_fls, parse_fls_body_file
+from cli.methods.mactime import execute_mactime, parse_mactime_file, filter_mactime_file
+from cli.methods.files import retrieve_files_from_image
+from cli.methods.delta import compare_hash_path
 
 from cli.loger import main_logger
 
@@ -21,7 +27,7 @@ def delta_images_cli(images: list[str]):
   
   for path in images:
     imageInfo(path=path)
-    bodyFilePath = executeFls(path=path, out=outPath)
+    bodyFilePath = execute_fls(path=path, out=outPath)
     
     name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
     tablesNames.append(name)
@@ -77,26 +83,26 @@ def retrieve_info_image(outPath, iterable: str):
   path = iterable
   
   dbCon = database_con(outPath)
-  imageInfo(path=path)
-  bodyFilePath = executeFls(path=path, out=outPath)
+  image_info(path=path)
+  bodyFilePath = execute_fls(path=path, out=outPath)
   name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
 
 
   create_files_table(name=name, con=dbCon)
-  fileData = parseBodyFile(path=bodyFilePath, out=outPath)
+  fileData = parse_fls_body_file(path=bodyFilePath, out=outPath)
   input_values_files(name=name, values=fileData, con=dbCon)
   
   # Timeline creation
   create_timeline_image_table_2(name=name, con=dbCon)
 
   # Create timeline files
-  createMacTimeLineFile(name=name, out=outPath)
+  execute_mactime(name=name, out=outPath)
   
   # Filtering mac timeline file:
-  filterMacTimeline(name=name, out=outPath)
+  filter_mactime_file(name=name, out=outPath)
   
   # Parse timelines file
-  timelineData = parseMacTimeLineFile(name=name, out=outPath)
+  timelineData = parse_mactime_file(name=name, out=outPath)
   
   # Add data to database file
   input_values_events_2(name=name, values=timelineData, con=dbCon)
@@ -110,12 +116,11 @@ def delta_image_web(paths: list[str], images: list[str]):
   main_logger.info('Initiating Delta images trough WEB')
   start_time = time.time()
   
-  outPath = prepareFilesystem(paths, out='./output')
+  outPath = prepare_filesystem(paths, out='./output')
   tablesNames = []
   
   with Pool(2) as p:
     res = p.map(partial(retrieve_info_image, outPath), paths)
-    print('Result: ', res)
   
   tablesNames = res
   print('Finished preprocessing images')
@@ -130,8 +135,8 @@ def delta_image_web(paths: list[str], images: list[str]):
     fileData = get_files_values_path(name=tableName, path='/etc', con=dbCon)
     dataImages.append((tableName, fileData))
   
-  fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
-  retrieveFilesFromImages(deltas=fileDelta, out=outPath)
+  fileDelta  = compare_hash_path(data=dataImages,con=dbCon)
+  retrieve_files_from_image(deltas=fileDelta, out=outPath)
   
   dbCon.close()
   
@@ -140,7 +145,7 @@ def delta_image_web(paths: list[str], images: list[str]):
 
 
 def get_events_images(tablesNames: list[str], directoryPath: str):
-  methods_logger.info('[DELTASCOPE] - Retrieving events from images')
+  main_logger.info('[DELTASCOPE] - Retrieving events from images')
   dbCon = database_con(path=directoryPath)
   baseImageTableName = ()
   nextImageTableName = ()
@@ -149,7 +154,6 @@ def get_events_images(tablesNames: list[str], directoryPath: str):
   for name in tablesNames:
     newName = name.replace('.img','').replace('-','_')
     newNames.append(newName)
-    # count = get_events_image_values_year_count(name=newName, con=dbCon)[0][0]
     date = get_events_image_values_neariest_date(name=newName, con=dbCon)[0][0]
     
     if len(baseImageTableName) == 0:
@@ -162,9 +166,9 @@ def get_events_images(tablesNames: list[str], directoryPath: str):
     else:
       pass
   
-  baseEvents = json.loads(get_events_deltas(baseImageTableName[1], 2023, dbCon)[0][0])[:100]
-  nextEvents = json.loads(get_events_deltas(nextImageTableName[1], 2023, dbCon)[0][0])[:100]
-  deltaEvents = json.loads(get_events_deltas(base=baseImageTableName[1], next=nextImageTableName[1], year=2023 ,con=dbCon)[0][0])
+  baseEvents = json.loads(get_events_json(baseImageTableName[1], 2023, dbCon)[0][0])[:100]
+  nextEvents = json.loads(get_events_json(nextImageTableName[1], 2023, dbCon)[0][0])[:100]
+  deltaEvents = json.loads(get_events_delta(base=baseImageTableName[1], next=nextImageTableName[1], year=2023 ,con=dbCon)[0][0])
   
   events = { 'delta': deltaEvents, 'base': baseEvents, 'next': nextEvents }
   
