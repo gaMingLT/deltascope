@@ -1,4 +1,4 @@
-import logging, datetime
+import logging
 
 
 class CustomFormatter(logging.Formatter):
@@ -54,4 +54,4 @@ def create_logger():
   return logger
 
 
-custom_logger = create_logger()
+main_logger = create_logger()

@@ -43,3 +43,7 @@ a {
   background-color: aqua;
   word-wrap: break-word;
 }
+
+.vis-item.general {
+  background-color: lightgray;
+}

@@ -60,16 +60,16 @@ const DisplayEvents = ({
   };
 
   const getActivity = (mActivity: string, aActivity: string, cActivity: string, bActivity: string) => {
-    if (mActivity != ".") {
-      return "Modified"
+    if (bActivity != ".") {
+      return "Created"
     }
+    else if (mActivity != ".")  {
+      return "Modified"
+    }      
     else if (aActivity != ".") {
       return "Accessed"
     }
     else if (cActivity != ".") {
-      return "Changed"
-    }
-    else if (bActivity != ".") {
       return "Created"
     }
   }

@@ -93,18 +93,19 @@ const DisplayTimeline = ({ eventsData }: { eventsData: any }) => {
 
       let itemToAdd: any = { id: idCounter, content: divContent , start: element.Date }
 
-      if (element.mActivity != ".") {
-        itemToAdd.className = "modified"
+      if (element.bActivity != ".") {
+        itemToAdd.className = "created"
       }
+      else if (element.mActivity != ".")  {
+        itemToAdd.className = "modified"
+      }      
       else if (element.aActivity != ".") {
         itemToAdd.className = "accessed"
       }
       else if (element.cActivity != ".") {
         itemToAdd.className = "changed"
       }
-      else if (element.bActivity != ".") {
-        itemToAdd.className = "created"
-      }
+
 
       if (addToTimeline(itemToAdd.className)) {
         items.push(itemToAdd);
