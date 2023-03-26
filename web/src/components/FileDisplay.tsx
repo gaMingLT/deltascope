@@ -1,32 +1,35 @@
-import { Box, Grid, TextareaAutosize, Typography } from "@mui/material";
+import { Box, Button, Grid, TextareaAutosize, Typography } from "@mui/material";
 import Textarea from '@mui/joy/Textarea';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import  Editor, { useMonaco } from "@monaco-editor/react";
 
 const FileDisplay = ({ fileBlob }: { fileBlob: Blob | undefined }) => {
   const [fileContent, setFileContent] = useState<string | ArrayBuffer | null>(
     ""
   );
   const [fileSet, setFileSet] = useState<boolean>(false);
+  const monaco = useMonaco();
 
   useEffect(() => {
-    console.log('On effect!')
-    if (!fileSet && fileBlob) {
-      console.log('Loading content of file')
+    if (fileBlob) {
       loadFile()
       setFileSet(true)
     }
+
   })
+
+  const setEditorContent = (content: string) => {
+    monaco?.editor.getModels()[0]?.setValue(content);
+  } 
 
   const loadFile = () => {
     const reader = new FileReader();
-    console.log("Reading file");
 
     reader.addEventListener(
       "load",
       () => {
-        // this will then display a text file
-        console.log("Result: ", reader.result);
         setFileContent(reader.result);
+        setEditorContent(reader.result as string);
       },
       false
     );
@@ -46,13 +49,19 @@ const FileDisplay = ({ fileBlob }: { fileBlob: Blob | undefined }) => {
         </Grid>
         <Grid item>
           <Box padding={0.5} >
-            <TextareaAutosize
-                minRows={15}
-                style={{ width: 800 }}
-                onClick={loadFile}
-                value={fileContent?.toString()}
-              />
+                 <Editor
+                  
+                  height="30vh"
+                  theme="vs-light"
+                  defaultLanguage="text"
+                  defaultValue={"File Content Here!"}
+
+                  // options = {options}
+                />
           </Box>
+        </Grid>
+        <Grid item>
+            <Button variant="contained" onClick={loadFile} >Load file</Button>
         </Grid>
       </Grid>
     </>
