@@ -17,3 +17,10 @@ def create_timeline_image_table_2(name: str, con):
   cur = con.cursor()
   cur.execute("CREATE TABLE {0}_events(date, size, mActivity, aActivity, cActivity, bActivity, fileType, ownerPerm, groupPerm, otherPerm ,uid,guid,inode,name)".format(name.replace('-','_')))
   con.commit()
+
+def create_loaddb_events_table(name: str, con):
+  main_logger.debug('Creating table: {0}_loaddb_events'.format(name))
+  cur = con.cursor()
+  cur.execute("CREATE TABLE {0}_loaddb_events(full_description, display_name, event_description_id, time)".format(name.replace('-','_')))
+  con.commit()
+ 

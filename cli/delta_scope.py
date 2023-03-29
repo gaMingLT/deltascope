@@ -1,15 +1,17 @@
 from cli.methods import * 
-from cli.db.conn import database_con
-from cli.db.tables import create_timeline_image_table_2, create_files_table
+from cli.db.conn import database_con, database_con_loaddb
+from cli.db.tables import create_timeline_image_table_2, create_files_table, create_loaddb_events_table
 from cli.db.events import input_values_events_2, get_events_image_values_neariest_date, get_events_image_values_neariest_date
 from cli.db.files import input_values_files, get_files_values_path
 from cli.db.delta import get_events_json, get_events_delta
+from cli.db.loaddb import get_events_loaddb, input_values_contentdb
 
 from cli.methods.utils import image_info, prepare_filesystem
 from cli.methods.fls import execute_fls, parse_fls_body_file
 from cli.methods.mactime import execute_mactime, parse_mactime_file, filter_mactime_file
 from cli.methods.files import retrieve_files_from_image
 from cli.methods.delta import compare_hash_path
+from cli.methods.loaddb import load_database_from_image
 
 from cli.loger import main_logger
 
@@ -27,7 +29,7 @@ def delta_images_cli(images: list[str]):
   
   for path in images:
     imageInfo(path=path)
-    bodyFilePath = execute_fls(path=path, out=outPath)
+    bodyFilePath = execute_fls(imagePath=path, out=outPath)
     
     name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
     tablesNames.append(name)
@@ -84,12 +86,12 @@ def retrieve_info_image(outPath, iterable: str):
   
   dbCon = database_con(outPath)
   image_info(path=path)
-  bodyFilePath = execute_fls(path=path, out=outPath)
+  bodyFilePath = execute_fls(imagePath=path, out=outPath)
   name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
 
 
   create_files_table(name=name, con=dbCon)
-  fileData = parse_fls_body_file(path=bodyFilePath, out=outPath)
+  fileData = parse_fls_body_file(filePath=bodyFilePath, out=outPath)
   input_values_files(name=name, values=fileData, con=dbCon)
   
   # Timeline creation
@@ -107,8 +109,20 @@ def retrieve_info_image(outPath, iterable: str):
   # Add data to database file
   input_values_events_2(name=name, values=timelineData, con=dbCon)
   
-  dbCon.close()
+  # dbCon.close()
   
+  
+  # Events 2.0? -
+  load_database_from_image(imagePath=path, out=outPath)
+  dbConLoaded = database_con_loaddb(filePath=path, outPath=outPath)
+  
+  create_loaddb_events_table(name=name, con=dbCon)
+  
+  eventsLoadeddb = get_events_loaddb(name='', con=dbConLoaded)
+  input_values_contentdb(name=name, values=eventsLoadeddb, con=dbCon)
+
+  dbCon.close
+    
   return name
   
   

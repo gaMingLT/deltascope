@@ -2,11 +2,11 @@ import codecs, datetime
 from cli.loger import main_logger
 from os import system
 
-def execute_fls(path: str, out: str) -> str:
+def execute_fls(imagePath: str, out: str) -> str:
   main_logger.info('[METHODS] - Retrieving files from image using FLS')
   
-  bodyFilePath = "{0}/{1}.txt".format(out, path.split('/')[-1].split('.')[0])
-  cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/', path ,bodyFilePath)
+  bodyFilePath = "{0}/{1}.txt".format(out, imagePath.split('/')[-1].split('.')[0])
+  cmd = "{0} {1} {2} {3} > {4}".format("fls", "-r -h -m",'/', imagePath ,bodyFilePath)
   res = system(cmd)
   
   if res == 0:
@@ -15,11 +15,11 @@ def execute_fls(path: str, out: str) -> str:
   return bodyFilePath
 
 
-def parse_fls_body_file(path: str, out: str) -> list:
+def parse_fls_body_file(filePath: str, out: str) -> list:
   main_logger.info('[METHODS] - Parsing body file')
   
   # f = open(path, "r")
-  f = codecs.open(path, encoding='utf-8', errors='ignore')
+  f = codecs.open(filePath, encoding='utf-8', errors='ignore')
   
   data = []
   for line in f.readlines():
