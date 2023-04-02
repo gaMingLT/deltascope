@@ -29,7 +29,7 @@ const Home: NextPage = () => {
             sx={{ textAlign: "center" }}
             justifyContent="center"
           >
-            <h1>Deltascope</h1>
+            <h1 className="text-4xl px-2 py-2" >Deltascope</h1>
           </Grid>
           <Grid
             item

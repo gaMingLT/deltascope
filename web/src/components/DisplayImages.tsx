@@ -82,13 +82,13 @@ const DisplayImages = ({
     <>
       <Grid item xs={4}>
         <Box /* bgcolor="primary.light" */ padding="1rem">
-          <Box textAlign="center">
-            <h2>Images</h2>
-          </Box>
+          {/* <Box textAlign="center"> */}
+            <h2 className="text-2xl py-2 px-2 text-center" >Images</h2>
+          {/* </Box> */}
           <Grid item style={{ padding: "1rem" }}>
-            <Box textAlign="center">
-              <h3>Selected Images</h3>
-            </Box>
+            {/* <Box textAlign="center"> */}
+              <h3 className="text-xl px-2 py-2 text-center">Selected Images</h3>
+            {/* </Box> */}
             <Grid item container direction="row" spacing="10">
               {selectedImages.map((name, index) => (
                 <Grid item key={index} onClick={addImageForComparison} >
@@ -102,9 +102,9 @@ const DisplayImages = ({
             </Grid>
           </Grid>
           <Grid item style={{ padding: "1rem" }}>
-            <Box textAlign="center">
-              <h3>Available Images</h3>
-            </Box>
+            {/* <Box textAlign="center"> */}
+              <h3 className="text-xl px-2 py-2 text-center">Available Images</h3>
+            {/* </Box> */}
             <Grid
               item
               container

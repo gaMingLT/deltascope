@@ -183,7 +183,7 @@ const DisplayEvents = ({
                 </Box>
 
                 <TabPanel value="0">
-                  <Box height={'350px'} width='100%'>
+                  <Box height={'350px'} width={'85%'}>
                     <DataGrid
                       onRowClick={handleRowClick}
                       sx={{ fontSize: "1.2rem" }}
@@ -194,7 +194,7 @@ const DisplayEvents = ({
                 </TabPanel>
 
                 <TabPanel value="1">
-                  <Box height={'350px'}  width='100%'>
+                  <Box height={'350px'}  width={'85%'}>
                     <DataGrid
                         onRowClick={handleRowClick}
                         sx={{ fontSize: "1.2rem" }}
@@ -205,7 +205,7 @@ const DisplayEvents = ({
                 </TabPanel>
 
                 <TabPanel value="2">
-                  <Box height={'350px'}  width='100%'>
+                  <Box height={'350px'}  width={'85%'}>
                     <DataGrid
                         onRowClick={handleRowClick}
                         sx={{ fontSize: "1.2rem" }}
@@ -229,7 +229,7 @@ const DisplayEvents = ({
         <Grid item container spacing="2" direction="column">
           <Grid item>
             <Box>
-              <Button variant="contained" sx={{ margin: "1rem" }} onClick={getEvents}>
+              <Button className="bg-slate-500" variant="contained" sx={{ margin: "1rem" }} onClick={getEvents}>
                 Get Events
               </Button>                
             </Box>

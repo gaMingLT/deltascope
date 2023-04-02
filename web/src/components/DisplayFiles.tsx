@@ -64,33 +64,45 @@ const DisplayFiles = ({ directoryName }: {
           </Box>
         </Grid>
         <Grid item container spacing="2" direction="column">
+          <Grid item container spacing="2" direction="column">
           {
-            Object.keys(files).map((key: string, index: number) => {
-              return (
-                <Grid item key={index} > 
-                  <Box bgcolor="pink" px={0.5} py={0.5} onClick={loadFile} data-name={key} style={{ cursor: 'pointer' }} >
-                    {key}
-                  </Box>
-                </Grid>
-              )
-            })
-          }
-        </Grid>
+              Object.keys(files).map((key: string, index: number) => {
+                return (
+                  <Grid item key={index} > 
+                    <p className="px-2 py-2 bg-slate-400 rounded-md cursor-pointer hover:bg-slate-300"  onClick={loadFile} data-name={key} >{key}</p>
+                  </Grid>
+                )
+              })
+            }
+          </Grid>
+          <Grid item container spacing={2} direction="column">
+            <Grid item>
+              <Box>
+                <Button className="bg-slate-500" variant="contained" sx={{ margin: "1rem" }} onClick={getFiles}>
+                  Get Files
+              </Button>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box>
+                {displayError ? (
+                  <Alert sx={{ marginTop: "1rem" }} severity="error">
+                    {ErrorMessage}
+                  </Alert>
+                ) : (
+                  ""
+                )}
+              </Box>
+            </Grid>
+          </Grid>
       </Grid>
-      <Grid item container spacing={2}  xs={6} style={{ border: '2px solid white', borderRadius: '5px' }} >
-        {/* {
-          Object.keys(files).map((key: string, index: number) => { 
-            return (
-              <FileDisplay key={index} fileBlob={new Blob(baseToFile(files[key]))} />
-            )
-          })
-        } */}
+      <Grid item container spacing={2}  xs={7} style={{ border: '2px solid white', borderRadius: '5px' }} >
         <FileDisplay fileBlob={loadedFileContent} />
       </Grid>
-      <Grid item container spacing={2} direction="column">
+      {/* <Grid item container spacing={2} direction="column">
         <Grid item>
           <Box>
-            <Button variant="contained" sx={{ margin: "1rem" }} onClick={getFiles}>
+            <Button className="bg-slate-500" variant="contained" sx={{ margin: "1rem" }} onClick={getFiles}>
               Get Files
           </Button>
           </Box>
@@ -106,8 +118,10 @@ const DisplayFiles = ({ directoryName }: {
             )}
           </Box>
         </Grid>
+      </Grid> */}
+        </Grid>
       </Grid>
-    </Grid>
+    {/* </Grid> */}
   </>
   )
 }

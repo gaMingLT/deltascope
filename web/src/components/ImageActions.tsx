@@ -25,9 +25,9 @@ const ImageActions = ({
     <>
       <Grid item xs={8}>
           <Box /* bgcolor="primary.light" */ textAlign="center" padding="1rem">
-            <Box textAlign="center">
-              <h2>Events</h2>
-            </Box>
+            {/* <Box textAlign="center"> */}
+              <h2 className="text-2xl px-2 py-2 text-center">Image Actions</h2>
+            {/* </Box> */}
             <Box>
               <TabContext value={value.toString()}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

@@ -47,3 +47,7 @@ a {
 .vis-item.general {
   background-color: lightgray;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

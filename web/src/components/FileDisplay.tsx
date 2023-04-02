@@ -41,29 +41,39 @@ const FileDisplay = ({ fileBlob }: { fileBlob: Blob | undefined }) => {
 
   return (
     <>
-      <Grid item container spacing={4} xs direction="column">
-        <Grid item>
-          <Box>
-            <Typography variant="h5" >File Name here</Typography>
-          </Box>
-        </Grid>
-        <Grid item>
-          <Box padding={0.5} >
-                 <Editor
-                  
+      {/* <div className="flex flex-row justify-between items-center px-2 py-2 gap-5 w-full"> */}
+      <div className="px-2 py-2" >
+        <Editor
+                  height="30vh"
+                  theme="vs-light"
+                  defaultLanguage="text"
+                  defaultValue={"File Content Here!"}
+              />
+                 {/* <Button className="bg-slate-500 h-max" variant="contained" onClick={loadFile} >Load file</Button>  */}
+      </div>
+
+      {/* <Grid item container spacing={4} direction="column"> */}
+        {/* <Grid item> */}
+          {/* <Box> */}
+            {/* <Typography variant="h5" >File Name here</Typography> */}
+          {/* </Box> */}
+        {/* </Grid> */}
+        {/* <Grid item container spacing={2} direction="row"> */}
+          {/* <Box padding={0.5} > */}
+                 {/* <Editor
                   height="30vh"
                   theme="vs-light"
                   defaultLanguage="text"
                   defaultValue={"File Content Here!"}
 
-                  // options = {options}
-                />
-          </Box>
-        </Grid>
-        <Grid item>
+                /> */}
+          {/* </Box> */}
+          {/* <Button className="bg-slate-500" variant="contained" onClick={loadFile} >Load file</Button>  */}
+        {/* </Grid> */}
+        {/* <Grid item>
             <Button variant="contained" onClick={loadFile} >Load file</Button>
-        </Grid>
-      </Grid>
+        </Grid> */}
+      {/* </Grid> */}
     </>
   );
 };
