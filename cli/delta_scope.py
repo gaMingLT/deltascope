@@ -113,15 +113,15 @@ def retrieve_info_image(outPath, iterable: str):
   
   
   # Events 2.0? -
-  load_database_from_image(imagePath=path, out=outPath)
-  dbConLoaded = database_con_loaddb(filePath=path, outPath=outPath)
+  # load_database_from_image(imagePath=path, out=outPath)
+  # dbConLoaded = database_con_loaddb(filePath=path, outPath=outPath)
   
-  create_loaddb_events_table(name=name, con=dbCon)
+  # create_loaddb_events_table(name=name, con=dbCon)
   
-  eventsLoadeddb = get_events_loaddb(name='', con=dbConLoaded)
-  input_values_contentdb(name=name, values=eventsLoadeddb, con=dbCon)
+  # eventsLoadeddb = get_events_loaddb(name='', con=dbConLoaded)
+  # input_values_contentdb(name=name, values=eventsLoadeddb, con=dbCon)
 
-  dbCon.close
+  # dbCon.close
     
   return name
   
