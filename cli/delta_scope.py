@@ -1,17 +1,14 @@
 from cli.methods import * 
-from cli.db.conn import database_con, database_con_loaddb
-from cli.db.tables import create_timeline_image_table_2, create_files_table, create_loaddb_events_table
-from cli.db.events import input_values_events_2, get_events_image_values_neariest_date, get_events_image_values_neariest_date
+from cli.db.conn import database_con
+from cli.db.tables import create_events_table, create_files_table
+from cli.db.events import input_values_events, get_events_image_values_neariest_date, get_events_json
 from cli.db.files import input_values_files, get_files_values_path
-from cli.db.delta import get_events_json, get_events_delta
-from cli.db.loaddb import get_events_loaddb, input_values_contentdb
+from cli.db.delta import get_events_delta
 
 from cli.methods.utils import image_info, prepare_filesystem
 from cli.methods.fls import execute_fls, parse_fls_body_file
 from cli.methods.mactime import execute_mactime, parse_mactime_file, filter_mactime_file
-from cli.methods.files import retrieve_files_from_image
-from cli.methods.delta import compare_hash_path
-from cli.methods.loaddb import load_database_from_image
+from cli.methods.files import retrieve_files_from_image, compare_hash_path
 
 from cli.loger import main_logger
 
@@ -20,65 +17,38 @@ from functools import partial
 import time, json
 
 
+# Currently does not work because of module cli not found when executing main.py from inside the cli directory
 def delta_images_cli(images: list[str]):
   main_logger.info('Initiating Delta images trough CLI')
   
-  outPath = prepareFilesystem(images, out='./output')
-  dbCon = database_con(outPath)
+  start_time = time.time()
+  
+  outPath = prepare_filesystem(images, out='./output')
   tablesNames = []
   
-  for path in images:
-    imageInfo(path=path)
-    bodyFilePath = execute_fls(imagePath=path, out=outPath)
-    
-    name = (bodyFilePath.split('/')[-1].split('.')[0]).replace('-','_')
-    tablesNames.append(name)
-    
-    create_files_table(name=name, con=dbCon)
-    fileData = parseBodyFile(path=bodyFilePath, out=outPath)
-    input_values_files(name=name, values=fileData, con=dbCon)
-    
-    # Timeline creation
-    create_timeline_image_table_2(name,con=dbCon)
+  with Pool(2) as p:
+    res = p.map(partial(retrieve_info_image, outPath), images)
   
-    # Create timeline files
-    createMacTimeLineFile(name=name, out=outPath)
-    
-    # Parse timelines file
-    timelineData = parseMacTimeLineFile(name=name, out=outPath)
-    
-    # Add data to database file
-    input_values_files(name=name, values=timelineData, con=dbCon)
+  tablesNames = res
+  
+  main_logger.debug('Finished preprocessing images')
+  main_logger.debug('Execution time', time.time() - start_time, ' Seconds')
 
-  # dataImages = []
+
+  # Image Differences
+  dbCon = database_con(outPath)
+  dataImages = []
+  for tableName in tablesNames:
+    fileData = get_files_values_path(name=tableName, path='/etc', con=dbCon)
+    dataImages.append((tableName, fileData))
   
-  # for tableName in tablesNames:
-  #   fileData = getImageFilesValues(name=tableName, con=dbCon)
-  #   dataImages.append((tableName,fileData))
+  fileDelta  = compare_hash_path(data=dataImages,con=dbCon)
+  retrieve_files_from_image(deltas=fileDelta, out=outPath)
   
-  # fileDelta  = compareHashAndPath(data=dataImages,con=dbCon)
-  # retrieveFilesFromImages(deltas=fileDelta, out=outPath)
+  dbCon.close()
   
-  
-  events = { 'base': [], 'next': [], 'delta': [] }
-  
-  for index, tableName in enumerate(tablesNames):
-    eventsData = get_events_images(name=tableName, con=dbCon)
-    if index == 0:
-      events['base'] = eventsData
-    else:
-      events['next'] = eventsData
-  
-  # createTimelineDeltaTable(names=tablesNames, con=dbCon)
-  eventsDelta = get_events_deltas(tablesNames, con=dbCon)
-  # print('Delta', eventsDelta)
-  
-  events['delta'] = eventsDelta
-  # print('Events images: ', events)
- 
-  # print('Outpath: ', outPath)
- 
-  return outPath
+  print("Images parsed: ", images)
+  print("Files written to directory: ", outPath)
 
 
 def retrieve_info_image(outPath, iterable: str):
@@ -95,7 +65,7 @@ def retrieve_info_image(outPath, iterable: str):
   input_values_files(name=name, values=fileData, con=dbCon)
   
   # Timeline creation
-  create_timeline_image_table_2(name=name, con=dbCon)
+  create_events_table(name=name, con=dbCon)
 
   # Create timeline files
   execute_mactime(name=name, out=outPath)
@@ -107,21 +77,10 @@ def retrieve_info_image(outPath, iterable: str):
   timelineData = parse_mactime_file(name=name, out=outPath)
   
   # Add data to database file
-  input_values_events_2(name=name, values=timelineData, con=dbCon)
+  input_values_events(name=name, values=timelineData, con=dbCon)
   
-  # dbCon.close()
-  
-  
-  # Events 2.0? -
-  # load_database_from_image(imagePath=path, out=outPath)
-  # dbConLoaded = database_con_loaddb(filePath=path, outPath=outPath)
-  
-  # create_loaddb_events_table(name=name, con=dbCon)
-  
-  # eventsLoadeddb = get_events_loaddb(name='', con=dbConLoaded)
-  # input_values_contentdb(name=name, values=eventsLoadeddb, con=dbCon)
-
-  # dbCon.close
+  dbCon.close()
+ 
     
   return name
   
@@ -137,9 +96,9 @@ def delta_image_web(paths: list[str], images: list[str]):
     res = p.map(partial(retrieve_info_image, outPath), paths)
   
   tablesNames = res
-  print('Finished preprocessing images')
-
-  print('Execution time', time.time() - start_time, ' Seconds')
+  
+  main_logger.debug('Finished preprocessing images')
+  print('Execution time', {0}, ' Seconds',  time.time() - start_time)
 
 
   # Image Differences

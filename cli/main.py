@@ -1,6 +1,9 @@
-import argparse
+import argparse, os, sys
 from delta_scope import delta_images_cli
 
+# currentdir = os.path.dirname(os.path.realpath(__file__))
+# parentdir = os.path.dirname(currentdir)
+# sys.path.append(parentdir)
 
 def main():
   args = parseargs()

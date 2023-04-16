@@ -6,12 +6,6 @@ def input_values_files(name: str, values, con):
   cur.executemany("INSERT INTO {0}_files VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(name.replace('-','_')), values)
   con.commit()
 
-def get_files_values(name: str, con):
-  cur = con.cursor()
-  main_logger.debug('Retrieving values from database: {0}'.format(name))
-  res = cur.execute("SELECT * FROM {0}_files LIMIT 100".format(name))
-  return res.fetchall()
-
 def get_files_values_path(name: str, path: str, con):
   cur = con.cursor()
   main_logger.debug('Retrieving values from database: {0}'.format(name))

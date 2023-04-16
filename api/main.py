@@ -1,10 +1,7 @@
-from typing import Union
-import os, sys, logging
-from fastapi import FastAPI, File, UploadFile
+import os, sys
+from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel
-from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
-from logging.handlers import RotatingFileHandler
 from loger import custom_logger
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
