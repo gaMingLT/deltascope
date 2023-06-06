@@ -15,8 +15,4 @@ The application consists of three components: api ``fastapi``, web ``NextJS``, c
 
 ## Running the application
 
-**TODO add guide as much as possible**
-
-## Problems
-
-**TODO: add list of problems**
+The API can be run by executing the ``uvicorn main:app --reload`` command, the web can be run by executing ``npm run dev``. All other required packages both for the api, cli & web need to be installed to be able to run the applications.
